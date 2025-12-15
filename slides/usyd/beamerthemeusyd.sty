@@ -1,46 +1,65 @@
 \ProvidesPackage{beamerthemeusyd}[USYD beamer theme]
+
+%========================================================
+% Mode: only applies these settings in presentation mode
+%========================================================
 \mode<presentation>
 
+%========================================================
+% Package dependencies
+% - tikz: used to draw the title/background layout
+% - graphicx: images/logos
+% - etoolbox: \ifdefempty for conditional logo inclusion
+%========================================================
 \RequirePackage{tikz}
 \RequirePackage{graphicx}
 \RequirePackage{etoolbox}
 
-% --------------------
-% Logo Definition
-% --------------------
-\graphicspath{{assets/}}
+%========================================================
+% Asset path and internal theme variables
+%========================================================
+\graphicspath{{assets/}} % where \includegraphics will look for files by default
 
+% Default asset names (can be overridden by user macros below)
 \gdef\USYD@logo{USYDLogo}
 \gdef\USYD@affiliationlogo{}
 \gdef\USYD@titlegraphic{USYDTitle}
 \gdef\USYD@titlegraphicbackground{usydwhite}
 
+%========================================================
+% User-facing configuration commands
+% (These set the internal \USYD@... variables above)
+%========================================================
 \def\logo#1{\gdef\USYD@logo{#1}}
 \def\affiliationlogo#1{\gdef\USYD@affiliationlogo{#1}}
 \def\titlegraphic#1{\gdef\USYD@titlegraphic{#1}}
 \def\titlegraphicbackground#1{\gdef\USYD@titlegraphicbackground{#1}}
 
-% ------------------------------
-% Load colour and font theme
-% ------------------------------
+%========================================================
+% Load colour and font themes
+%========================================================
 \usecolortheme{usyd}
 \usefonttheme{usyd}
 
-% --------------------
+%========================================================
 % Hyperref styling
-% --------------------
+%========================================================
 \hypersetup{
   colorlinks=true,
   urlcolor=usydred,
   linkcolor=,
 }
 
-% No navigation symbols
+%========================================================
+% Beamer UI: remove navigation symbols
+%========================================================
 \setbeamertemplate{navigation symbols}{}
 
-% --------------------
-% Background
-% --------------------
+%========================================================
+% Background template
+% - Page 1: split layout (left red, right image background + title graphic + logos)
+% - Other pages: plain white
+%========================================================
 \setbeamertemplate{background}{%
   \begin{tikzpicture}
     \ifnum\thepage=1\relax%
@@ -72,19 +91,23 @@
       %   \usebeamertemplate*{affiliationlogo titlepage}%
       % };
     \else
+      % Non-title pages: plain white background
       \fill[usydwhite,opacity=1]
         (0,0) rectangle (\the\paperwidth, \the\paperheight);
     \fi
   \end{tikzpicture}%
 }
 
-% ------------------------------
-% Title page template
-% ------------------------------
+%========================================================
+% Title page template (usyd)
+% - Uses a left-half-width title box aligned to the text area
+%========================================================
 \defbeamertemplate*{title page}{usyd}[1][]{
   \newlength\beamertitlebox
+  % Width is half the paper minus the left margin (matches split layout)
   \setlength\beamertitlebox{\dimexpr0.5\paperwidth-\Gm@lmargin}
   \begingroup
+    % Title
     \hskip-10pt
     \begin{beamercolorbox}[sep=0pt,wd=\beamertitlebox,#1]{title}
       \usebeamerfont{title}\inserttitle\par%
@@ -95,11 +118,13 @@
       \fi%
     \end{beamercolorbox}\vskip2em
 
+    % Author
     \hskip-10pt
     \begin{beamercolorbox}[sep=0pt,wd=\beamertitlebox,#1]{author}
       \usebeamerfont{author}\insertauthor%
     \end{beamercolorbox}\vskip1em
 
+    % Date
     \hskip-10pt
     \begin{beamercolorbox}[sep=0pt,wd=\beamertitlebox,#1]{date}
       \usebeamerfont{date}\insertdate%
@@ -107,9 +132,11 @@
   \endgroup
 }
 
-% --------------------
-% Footline:
-% --------------------
+%========================================================
+% Footline template (usyd)
+% - Page 1: placeholder box (keeps spacing consistent)
+% - Other pages: institute label + frame number
+%========================================================
 \defbeamertemplate*{footline}{usyd}{%
   \ifnum\thepage=1\relax%
     \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=4ex]{placeholder}%
@@ -121,11 +148,16 @@
   \fi
 }
 
+%========================================================
+% Logo templates
+%========================================================
+
 % Titlepage logo templates
 \defbeamertemplate*{logo titlepage}{usyd}{%
   \includegraphics[width=2.4cm]{\USYD@logo}%
 }
 \defbeamertemplate*{affiliationlogo titlepage}{usyd}{%
+  % Only render if an affiliation logo was provided
   \ifdefempty{\USYD@affiliationlogo}{}{%
     \includegraphics[width=2.2cm]{\USYD@affiliationlogo}%
   }%
@@ -136,9 +168,14 @@
   \includegraphics[height=3em]{\USYD@logo}%
 }
 
+%========================================================
+% Layout templates
+%========================================================
+
 % No sidebar
 \defbeamertemplate*{sidebar right}{usyd}{}
 
+% Frametitle styling
 \defbeamertemplate*{frametitle}{usyd}[1][]{
   \vskip12pt
   \begin{beamercolorbox}[#1]{frametitle}
@@ -146,23 +183,7 @@
   \end{beamercolorbox}
 }
 
-% % ============================================================
-% % Apply the consolidated templates
-% % (Options retained for compatibility; styling remains consistent
-% % with provided inner/outer files unless you later add variants.)
-% % ============================================================
-
-% \setbeamertemplate{title page}[usyd]
-% \setbeamertemplate{footline}[usyd]
-% \setbeamertemplate{frametitle}[usyd]
-
-% % \setbeamertemplate{block begin}{
-% %   \begin{beamercolorbox}[wd=0.8\textwidth,leftskip=0.8em]{block title}
-% %     \usebeamerfont*{block title}\insertblocktitle
-% %   \end{beamercolorbox}
-% %   \nointerlineskip
-% %   \begin{beamercolorbox}[wd=0.8\textwidth,sep=0.75em]{block body}
-% %     \usebeamerfont{block body}
-% % }
-
+%========================================================
+% End: restore normal mode handling
+%========================================================
 \mode<all>
