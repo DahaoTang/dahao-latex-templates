@@ -1,49 +1,26 @@
+% !TeX program = xelatex
 \documentclass{beamer}
 
-\usepackage[orientation=portrait,size=a0,scale=1.0]{beamerposter}
-
+%==============================================================================
+%                               THEME SETUP
+%==============================================================================
+\usepackage[orientation=portrait, size=a0, scale=0.9]{beamerposter}
 \mode<presentation>{\usetheme{usydposter}}
 
-%========================================================
-% Core packages
-%========================================================
-\usepackage[australian]{babel}
-\usepackage{amsmath}
-\usepackage{graphicx}
+%==============================================================================
+%                                 PACKAGES
+%==============================================================================
+\usepackage[australian]{babel} % Localization
+\usepackage{bookmark}          % PDF Bookmarks
+\usepackage{amsmath}           % Math Environments
+\usepackage{graphicx}          % Image Handling
 
-\graphicspath{{assets/}{./}}
+% Suppress hyperref warnings for superscripts in author names
+\pdfstringdefDisableCommands{\def\textsuperscript#1{#1}}
 
-%========================================================
-% Headbar logos
-%========================================================
-\logoleft{%
-  \hspace{1.5em}
-  \includegraphics[height=3.6cm]{AAAILogo}%
-}
-
-\logoright{%
-  \includegraphics[height=5cm]{USYDLogo}\hspace{1.5em}%
-  \includegraphics[height=5cm]{UTSLogo}%
-}
-
-%========================================================
-% Footer (Contact strip)
-%========================================================
-\setbeamertemplate{footline}{
-  \begin{beamercolorbox}[wd=\paperwidth]{upper separation line foot}
-    \rule{0pt}{3pt}
-  \end{beamercolorbox}
-  \leavevmode%
-  \begin{beamercolorbox}[ht=7ex,leftskip=1em,rightskip=1em]{author in head/foot}%
-    \hfill
-    \small\texttt{dahao.tang@sydney.edu.au}\hspace{2em}
-    \vskip1ex
-  \end{beamercolorbox}
-}
-
-%========================================================
-% Title Metadata
-%========================================================
+%==============================================================================
+%                                 METADATA
+%==============================================================================
 \title{Optimal Look-back Horizon for Time Series Forecasting \\
        in Federated Learning}
 
@@ -60,92 +37,178 @@
   \textsuperscript{1}The University of Sydney \qquad
   \textsuperscript{2}University of Technology Sydney
 
-  dahao.tang@sydney.edu.au,
-  n.yang@sydney.edu.au,
-  yanli.li@sydney.edu.au,
-  zhiyu.zhu@student.uts.edu.au,
-  zhibo.jin@student.uts.edu.au,
-  dong.yang@sydney.edu.au
+  \texttt{dahao.tang@sydney.edu.au, n.yang@sydney.edu.au, ...}
 }
 
-% Suppress hyperref warnings for superscripts
-\pdfstringdefDisableCommands{\def\textsuperscript#1{#1}}
+%==============================================================================
+%                             HEADER & FOOTER
+%==============================================================================
+% Note: The theme automatically looks in 'assets/' and '../../style/usyd/assets/'
 
-%========================================================
-% Document Layout
-%========================================================
+% --- Header Logos ---
+\logoleft{%
+  \hspace{1.5em}
+  % Ensure AAAILogo.pdf exists in your local assets folder
+  \includegraphics[height=3.6cm]{AAAILogo}%
+}
+
+\logoright{%
+  % USYD and UTS logos
+  \includegraphics[height=5cm]{USYDLogo}\hspace{0.1em}%
+  \includegraphics[height=10cm]{UTSLogo}\hspace{0.1em}%
+}
+
+% --- Footer Contact Info ---
+\setbeamertemplate{footline}{
+  % [FIX] Wrap in \vbox to allow vertical stacking
+  \vbox{%
+    % 1. The Red Line
+    % \begin{beamercolorbox}[wd=\paperwidth]{upper separation line foot}
+    %   \rule{0pt}{3pt}%
+    % \end{beamercolorbox}%
+    
+    % [FIX] Eliminate white gap
+    % \nointerlineskip%
+    
+    % 2. The Content Box
+    \begin{beamercolorbox}[ht=7ex,leftskip=1em,rightskip=1em]{author in head/foot}%
+      \hfill
+      \small\texttt{dahao.tang@sydney.edu.au}\hspace{2em}
+      \vskip1ex
+    \end{beamercolorbox}%
+  }%
+}
+
+%==============================================================================
+%                             DOCUMENT LAYOUT
+%==============================================================================
 \setlength{\columnsep}{2.2cm}
 
 \begin{document}
 
 \begin{frame}[t]{}
-  \begin{columns}[t,totalwidth=\textwidth]
+  \begin{columns}[t, totalwidth=\textwidth]
 
-    %----------------------------------------------------
-    % Left Column
-    %----------------------------------------------------
+    %--------------------------------------------------------------------------
+    %                               LEFT COLUMN
+    %--------------------------------------------------------------------------
     \begin{column}{0.48\textwidth}
 
+      % --- Abstract ---
       \begin{block}{Abstract}
-        Selecting an appropriate look-back horizon remains a fundamental challenge
-        in time series forecasting, particularly in federated learning where data
-        is decentralized and heterogeneous. We present a principled framework for
-        adaptive horizon selection via an intrinsic-space formulation grounded in a
-        structured synthetic data generator.
+        Selecting an appropriate look-back horizon remains a fundamental challenge in time series forecasting (TSF), 
+        particularly in federated learning scenarios where data is decentralized, heterogeneous, and often non-independent. 
+        While recent work has explored horizon selection by preserving forecasting-relevant information in an intrinsic space, 
+        these approaches are primarily restricted to centralized and independently distributed settings. 
+        This paper presents a principled framework for adaptive horizon selection in federated time series forecasting 
+        through an intrinsic space formulation. We introduce a synthetic data generator (SDG) that 
+        captures essential temporal structures in client data—including autoregressive dependencies, seasonality, and trend—while 
+        incorporating client-specific heterogeneity. Building on this model, we define a transformation that 
+        maps time series windows into an intrinsic representation space with well-defined geometric and statistical properties. 
+        We then derive a decomposition of the forecasting loss into a Bayesian term (irreducible uncertainty) 
+        and an approximation term (finite-sample effects and limited model capacity). 
+        Our analysis shows that while increasing the look-back horizon improves identifiability, 
+        it also increases approximation error. 
+        We prove that the total forecasting loss is minimized at the smallest horizon where the irreducible loss starts to saturate.
       \end{block}
 
+      % --- Introduction ---
       \begin{block}{Introduction}
-        Existing scaling-law analyses typically assume centralized IID data and
-        fail to account for client heterogeneity. In federated environments,
-        clients differ in dynamics, noise, and temporal structure, making fixed
-        horizons suboptimal.
+        Selecting the right look-back horizon is critical for time series forecasting, yet existing scaling-law insights assume centralized, 
+        IID data and fail under the heterogeneity of federated learning. In decentralized settings, clients differ in dynamics, noise, 
+        and sequence structure, making a fixed global horizon suboptimal. We introduce a principled framework that uses a structured 
+        Synthetic Data Generator to capture shared temporal patterns and client-specific variability. 
+        
+        Our contributions include:
         \begin{itemize}
-          \item Client-aware intrinsic representation space
-          \item Explicit Bayesian + approximation error decomposition
-          \item Provably optimal, adaptive horizon criterion
+          \item A geometry-preserving intrinsic space for heterogeneous multivariate series.
+          \item A tight decomposition linking horizon length to Bayesian and approximation errors.
+          \item A proof that forecasting loss is unimodal in horizon size, yielding a client-adaptive optimal horizon criterion.
         \end{itemize}
       \end{block}
 
-      \begin{block}{Synthetic Data Generator}
-        For client $k$, feature $f$, and time $t$:
-        \[
-          \hat{x}_{f,t,k}
-          = \sum_{j} A_{f,j,k}\sin\!\left(\frac{2\pi t}{T_{f,j,k}}+\theta_{f,j,k}\right)
-          + \sum_{i}\phi_{k,i}x_{f,t-i,k}
-          + \beta_{f,k}t + \epsilon_{f,t,k}.
-        \]
+      % --- Synthetic Data Generator ---
+      \begin{block}{Synthetic Data Generator (SDG)}
+        \begin{figure}[t]
+          \centering
+          % Ensure this PDF exists in your local 'assets' folder
+          \includegraphics[width=0.9\columnwidth]{real_vs_synthetic_smoothed.pdf} 
+          \caption{Comparison between real-world data and data generated by the SDG. The close alignment indicates that the SDG effectively captures the patterns present in real data.}
+          \label{fig1}
+        \end{figure}
+
+        An SDG is a parametric model designed to simulate univariate time series data characterized by seasonality, temporal dependence (AR memory), and trend. For a given client $k$, feature $f$, and time step $t$, the observation $\hat{x}_{f,t,k}$ is:
+        \begin{equation}
+        \label{eq:sdg}
+          \begin{split}
+            \hat{x}_{f,t,k} 
+              &= \text{Seasonal}(A_{f,j,k}, T_{f,j,k}, \Theta_{f,j,k}) + \text{AR}_{p,k}(\phi_k) \\
+              & \quad + \text{Trend}(\beta_{f,k}) + \epsilon_{f,t,k} \\
+              &= \sum_{j=1}^{J} A_{f,j,k} \cdot \sin \left( \frac{2 \pi t}{T_{f,j,k}} + \theta_{f,j,k} \right) \\
+              & \quad + \sum_{i=1}^{p} \phi_{k,i} \ x_{f,t-i,k} + \beta_{f,k} \ t + \epsilon_{f,t,k}.
+          \end{split}
+        \end{equation}
+      \end{block}
+
+      % --- Feature Skewness ---
+      \begin{block}{Feature Skewness Formulation}
+        In federated learning, each client observes a different distribution of the same features (feature skew). We model this heterogeneity as:
+        \begin{equation}
+            x_{f,t,k} = \Lambda_{f,k} \tilde{x}_{f,t,k} + \delta_{f,k}
+        \end{equation}
+        where $\Lambda_{fk}$ is the linear scale (controlling variance $\sigma_f^2$) and $\delta_{fk}$ is the mean shift for client $k$.
+      \end{block}
+
+      % --- Intrinsic Space ---
+      \begin{block}{Intrinsic Space Construction}
+        We construct a geometry-aware representation space that captures the essential temporal structure of non-IID time series. The transformation pipeline involves:
+        (1) Client-wise normalization; 
+        (2) Window flattening; 
+        (3) Global covariance estimation; 
+        (4) Intrinsic dimension estimation; and 
+        (5) Projection. 
+        
+        The intrinsic dimension for client $k$ is approximated as:
+        \begin{equation}
+          d_{I,k}(H) \approx F \cdot \left( \min\{H, \ell_{\mathrm{AR},k}\} + g_k(H) + 1 \right).
+        \end{equation}
+
+        Here, $\ell_{\mathrm{AR},k}$ denotes the effective AR memory:
+        \begin{equation}
+        \label{eq:l_ar}
+            \ell_{\mathrm{AR}, k} = \left\lceil \frac{\ln(1 / (1 - \epsilon))}{- \ln \rho_k} \right\rceil, \ \epsilon\in(0,1)
+        \end{equation}
+        where $\rho_k \in (0,1)$ is the spectral radius of the AR companion matrix.
       \end{block}
 
     \end{column}
 
-    %----------------------------------------------------
-    % Right Column
-    %----------------------------------------------------
+    %--------------------------------------------------------------------------
+    %                               RIGHT COLUMN
+    %--------------------------------------------------------------------------
     \begin{column}{0.48\textwidth}
 
+      % --- Loss Decomposition ---
       \begin{block}{Loss Decomposition}
         The global prediction loss decomposes as:
         \[
           L(H) = L_{\mathrm{Bayes}}(H) + L_{\mathrm{approx}}(H),
         \]
-        separating irreducible client uncertainty from approximation error induced
-        by finite samples and model capacity.
+        separating irreducible client uncertainty from approximation error induced by finite samples and model capacity.
       \end{block}
 
+      % --- Smallest Sufficient Horizon ---
       \begin{block}{Smallest Sufficient Horizon}
         For tolerance $\delta > 0$, define:
         \[
           H_k^*(\delta) = \min\{H : |\Delta L_{\mathrm{Bayes}}^{(k)}(H)| \le \delta\}.
         \]
-        This is the smallest horizon at which additional history yields negligible
-        irreducible error reduction.
+        This is the smallest horizon at which additional history yields negligible irreducible error reduction.
       \end{block}
 
+      % --- Conclusion ---
       \begin{block}{Conclusion}
-        The total forecasting loss is unimodal in horizon length. The smallest
-        sufficient horizon minimizes loss by balancing information identifiability
-        against approximation error growth, yielding a principled, client-adaptive
-        horizon selection rule.
+        The total forecasting loss is unimodal in horizon length. The smallest sufficient horizon minimizes loss by balancing information identifiability against approximation error growth, yielding a principled, client-adaptive horizon selection rule.
       \end{block}
 
     \end{column}

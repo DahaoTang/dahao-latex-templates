@@ -1,49 +1,94 @@
-\documentclass[aspectratio=169, 22pt]{beamer}
+% !TeX program = xelatex
+\documentclass[aspectratio=169, 12pt]{beamer}
 
+%==============================================================================
+%                               THEME SETUP
+%==============================================================================
+% Loads the USYD theme (which internally loads fonts and colors)
 \usetheme{usyd}
-% \usefonttheme{usyd}
-\usepackage{bookmark}
 
-\usepackage{listings}
+% Path to the image displayed on the title page (right-hand side)
+% Ensure this file exists in style/usyd/assets/ or the local assets/ folder
+\titlegraphic{USYDTitle} 
 
+%==============================================================================
+%                                 PACKAGES
+%==============================================================================
+\usepackage{bookmark}  % Fixes PDF bookmarks in Beamer
+\usepackage{booktabs}  % Professional tables
+\usepackage{listings}  % Code formatting
+
+%==============================================================================
+%                             LISTINGS CONFIG
+%==============================================================================
+% Configure code blocks to match the USYD Red/Grey theme
 \lstset{
-  basicstyle=\ttfamily\small,
+  language=Python,
+  basicstyle=\ttfamily\small\color{usydblack},
+  keywordstyle=\color{usydred}\bfseries,
+  stringstyle=\color{usydblack},
+  commentstyle=\color{gray}\itshape,
+  %
+  % Box styling
+  backgroundcolor=\color{usydgrey},
+  frame=l,             % Left line only
+  rulecolor=\color{usydred},
+  framesep=5pt,
+  framerule=2pt,
+  xleftmargin=10pt,
+  %
+  % Layout
   columns=fullflexible,
-  frame=single,
-  breaklines=true
+  breaklines=true,
+  showstringspaces=false
 }
 
-\title{Font Test}
-\subtitle{subtitle}
-\author{Your Name}
+%==============================================================================
+%                                 METADATA
+%==============================================================================
+\title{Presentation Title}
+\subtitle{Subtitle or Conference Name}
+\author{Firstname Lastname}
+\institute{School of Computer Science\\University of Sydney}
 \date{\today}
 
+%==============================================================================
+%                                 DOCUMENT
+%==============================================================================
 \begin{document}
 
+% --- Title Slide ---
 \begin{frame}
   \titlepage
 \end{frame}
 
-\begin{frame}
+% --- Frame 1: Standard Lists ---
+\begin{frame}{Standard Lists}
+  This is an example of standard itemize and enumerate environments.
+
   \begin{itemize}
-    \item test 1
-    \item test 2
+    \item Level 1 Item
+    \item Level 1 Item
     \begin{itemize}
-      \item test 2.1
+      \item Level 2 Item (Nested)
+      \item Level 2 Item
     \end{itemize}
   \end{itemize}
 
+  \vspace{1em}
+
   \begin{enumerate}
-    \item asd
-    \item asd
+    \item First Point
+    \item Second Point
   \end{enumerate}
 \end{frame}
 
-\begin{frame}{Math font check (Tinos)}
-  Inline math: $x + y = z$.
+% --- Frame 2: Math Font Verification ---
+\begin{frame}{Math Font Check (Tinos)}
+  Inline math check: $x + y = z$.
 
   \vspace{0.5em}
-  Roman + bold + text-in-math should be Tinos:
+  \textbf{Goal:} Roman + Bold + Text inside math should match Tinos font.
   \[
     \mathrm{KL}(p\|q)
     \;=\;
@@ -53,7 +98,7 @@
   \]
 
   \vspace{0.5em}
-  Also check mixed styles:
+  \textbf{Goal:} Check mixed styles (Italic vs Upright).
   \[
     \mathit{loss}(\mathbf{w}) = \sum_{i=1}^n \mathrm{log}\,p(y_i \mid x_i;\mathbf{w})
     \quad\text{where}\quad
@@ -61,11 +106,15 @@
   \]
 \end{frame}
 
-\begin{frame}[fragile]{Code example (GoogleSansCode)}
-\begin{lstlisting}[language=Python]
+% --- Frame 3: Code Highlighting ---
+\begin{frame}[fragile]{Code Example (Google Sans Code)}
+  The following code block uses the theme colors automatically.
+
+\begin{lstlisting}
 import math
 
 def softmax(xs):
+    """Compute softmax values for a list of numbers."""
     m = max(xs)
     exps = [math.exp(x - m) for x in xs]
     s = sum(exps)

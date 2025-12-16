@@ -8,15 +8,17 @@ The current templates include:
 .
 ├── cv				# a standard latex cv
 ├── poster
-│   └── usyd		# a USYD-inspired colour theme template
-└── slides
-    ├── casual		# a deep-blue theme
-    └── usyd		# a USYD-inspired colour theme template
+│   └── usyd        # a USYD-inspired colour theme template for poster
+├── slides
+│   ├── casual      # a deep-blue theme
+│   └── usyd        # a USYD-inspired colour theme template for slides
+└── style
+    └── usyd        # common colour and font theme used by USYD-inspired templates
 ```
 
 ## How to use
 
-_Notes: the following building process triggered by savinf the `.tex` file can only be successful when it builds successfully._
+_Notes: the following building process triggered by saving the `.tex` file can only be successful when it builds successfully._
 
 To build with a Makefile:
 
@@ -29,12 +31,3 @@ To build manually:
 
 1. In the terminal, navigate to the folder where `.tex` is at.
 2. Execute `xelatex <cv/poster/slides>.tex && xelatex <cv/poster/slides>.tex`. Note that, it sometimes requires to ask xelatex to build twice to get the final build.
-
-## How to maintain the template
-
-The USYD theme-related files across different folders (e.g., `./slides` and `./poster`) are **_exactly_** the same _when they have a same name_. Currently, this include:
-
-```
-beamercolorthemeusyd.sty
-beamerfontthemeusyd.sty
-```

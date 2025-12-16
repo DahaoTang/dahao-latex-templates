@@ -1,189 +1,192 @@
-\ProvidesPackage{beamerthemeusyd}[USYD beamer theme]
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeusyd}[University of Sydney Beamer Theme]
 
-%========================================================
-% Mode: only applies these settings in presentation mode
-%========================================================
+%==============================================================================
+%                               MODE: PRESENTATION
+%==============================================================================
 \mode<presentation>
 
-%========================================================
-% Package dependencies
-% - tikz: used to draw the title/background layout
-% - graphicx: images/logos
-% - etoolbox: \ifdefempty for conditional logo inclusion
-%========================================================
-\RequirePackage{tikz}
-\RequirePackage{graphicx}
-\RequirePackage{etoolbox}
+%==============================================================================
+%                                 DEPENDENCIES
+%==============================================================================
+\RequirePackage{tikz}       % Drawing the background layout
+\RequirePackage{graphicx}   % Image handling
+\RequirePackage{etoolbox}   % Conditional logic (\ifdefempty)
+% [NEW] adjustbox with 'export' enables 'min width/height' keys for \includegraphics
+% This is required to make the title image "cover" the area without distortion.
+\RequirePackage[export]{adjustbox} 
 
-%========================================================
-% Asset path and internal theme variables
-%========================================================
-\graphicspath{{assets/}} % where \includegraphics will look for files by default
+%==============================================================================
+%                           ASSETS AND CONFIGURATION
+%==============================================================================
 
-% Default asset names (can be overridden by user macros below)
+% --- Path Configuration ---
+% Look in local assets first, then shared style assets
+\graphicspath{{assets/}{../../style/usyd/assets/}}
+
+% --- Internal Variables (Defaults) ---
 \gdef\USYD@logo{USYDLogo}
 \gdef\USYD@affiliationlogo{}
 \gdef\USYD@titlegraphic{USYDTitle}
 \gdef\USYD@titlegraphicbackground{usydwhite}
 
-%========================================================
-% User-facing configuration commands
-% (These set the internal \USYD@... variables above)
-%========================================================
+% --- Public API (User Commands) ---
 \def\logo#1{\gdef\USYD@logo{#1}}
 \def\affiliationlogo#1{\gdef\USYD@affiliationlogo{#1}}
 \def\titlegraphic#1{\gdef\USYD@titlegraphic{#1}}
 \def\titlegraphicbackground#1{\gdef\USYD@titlegraphicbackground{#1}}
 
-%========================================================
-% Load colour and font themes
-%========================================================
-\usecolortheme{usyd}
-\usefonttheme{usyd}
+%==============================================================================
+%                             THEME IMPORT
+%==============================================================================
+\RequirePackage{../../style/usyd/beamerfontthemeusyd}
+\RequirePackage{../../style/usyd/beamercolorthemeusyd}
 
-%========================================================
-% Hyperref styling
-%========================================================
+%==============================================================================
+%                             GENERAL SETTINGS
+%==============================================================================
+
+% --- Hyperref Setup ---
 \hypersetup{
   colorlinks=true,
   urlcolor=usydred,
   linkcolor=,
 }
 
-%========================================================
-% Beamer UI: remove navigation symbols
-%========================================================
+% --- Navigation ---
 \setbeamertemplate{navigation symbols}{}
 
-%========================================================
-% Background template
-% - Page 1: split layout (left red, right image background + title graphic + logos)
-% - Other pages: plain white
-%========================================================
+%==============================================================================
+%                           TEMPLATE: BACKGROUND
+%==============================================================================
 \setbeamertemplate{background}{%
   \begin{tikzpicture}
     \ifnum\thepage=1\relax%
+      % --- Title Page Layout ---
       \useasboundingbox (0,0) rectangle(\the\paperwidth, \the\paperheight);
 
-      % Left red half (text area)
-      \fill[color=usydred]
-        (0,0) rectangle (0.5*\the\paperwidth, \the\paperheight);
+      % 1. Left Panel (Red Text Area)
+      \fill[color=usydred] (0,0) rectangle (0.5\paperwidth, \paperheight);
 
-      % Right half background (image area)
-      \fill[color=\USYD@titlegraphicbackground]
-        (0.5*\the\paperwidth,0) rectangle (\the\paperwidth, \the\paperheight);
+      % 2. Right Panel (Image Area with Clipping)
+      % We use a scope and \clip to ensure the "cover" image doesn't bleed 
+      % into the left panel or off the page.
+      \begin{scope}
+        \clip (0.5\paperwidth, 0) rectangle (\paperwidth, \paperheight);
+        
+        % Background color (failsafe if image is transparent or missing)
+        \fill[color=\USYD@titlegraphicbackground] 
+             (0.5\paperwidth,0) rectangle (\paperwidth, \paperheight);
 
-      % Title graphic centered in right half
-      \node[inner sep=0pt] (titlegraphic) at (0.75*\paperwidth, 0.5*\paperheight) {%
-        \includegraphics[
-          width=0.5\paperwidth,
-          height=\Gin@nat@height,
-          keepaspectratio
-        ]{\USYD@titlegraphic}%
-      };
+        % The Image Node
+        % centered at the middle of the right pane
+        \node[inner sep=0pt, anchor=center] at (0.75\paperwidth, 0.5\paperheight) {%
+          \includegraphics[
+            % Logic for "Object Fit: Cover":
+            % 1. Set width and height to the target box size
+            width=0.5\paperwidth,
+            height=\paperheight,
+            % 2. Maintain aspect ratio
+            keepaspectratio,
+            % 3. Force minimum dimensions to ensure it covers the whole box
+            % (Requires adjustbox package)
+            min width=0.5\paperwidth,
+            min height=\paperheight
+          ]{\USYD@titlegraphic}%
+        };
+      \end{scope}
 
-      % Logos near bottom-left area of the page (as provided)
-      \hskip-10pt
-      \node[inner sep=0pt] (logo) at (1.85, 1.2) {%
+      % 3. Logos (Layered on top)
+      \node[inner sep=0pt, anchor=base west] at (0.7, 1.2) {%
         \usebeamertemplate*{logo titlepage}%
       };
-      % \node[inner sep=0pt] (afflogo) at (6.4, 1.4) {%
+
+      % Optional affiliation logo
+      % \node[inner sep=0pt] at (6.4, 1.4) {%
       %   \usebeamertemplate*{affiliationlogo titlepage}%
       % };
+
     \else
-      % Non-title pages: plain white background
-      \fill[usydwhite,opacity=1]
-        (0,0) rectangle (\the\paperwidth, \the\paperheight);
+      % --- Standard Page Layout ---
+      \fill[usydwhite, opacity=1] (0,0) rectangle (\the\paperwidth, \the\paperheight);
     \fi
   \end{tikzpicture}%
 }
 
-%========================================================
-% Title page template (usyd)
-% - Uses a left-half-width title box aligned to the text area
-%========================================================
+%==============================================================================
+%                           TEMPLATE: TITLE PAGE
+%==============================================================================
 \defbeamertemplate*{title page}{usyd}[1][]{
   \newlength\beamertitlebox
-  % Width is half the paper minus the left margin (matches split layout)
-  \setlength\beamertitlebox{\dimexpr0.5\paperwidth-\Gm@lmargin}
+  \setlength\beamertitlebox{\dimexpr0.5\paperwidth-\Gm@lmargin\relax}
+  
   \begingroup
-    % Title
-    \hskip-10pt
-    \begin{beamercolorbox}[sep=0pt,wd=\beamertitlebox,#1]{title}
+    \hskip-10pt%
+    \begin{beamercolorbox}[sep=0pt, wd=\beamertitlebox, #1]{title}
       \usebeamerfont{title}\inserttitle\par%
-      \ifx\insertsubtitle\@empty\par%
+      \ifx\insertsubtitle\@empty%
       \else%
         \vskip0.25em%
         {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
       \fi%
-    \end{beamercolorbox}\vskip2em
+    \end{beamercolorbox}%
+    \vskip2em
 
-    % Author
-    \hskip-10pt
-    \begin{beamercolorbox}[sep=0pt,wd=\beamertitlebox,#1]{author}
+    \hskip-10pt%
+    \begin{beamercolorbox}[sep=0pt, wd=\beamertitlebox, #1]{author}
       \usebeamerfont{author}\insertauthor%
-    \end{beamercolorbox}\vskip1em
+    \end{beamercolorbox}%
+    \vskip1em
 
-    % Date
-    \hskip-10pt
-    \begin{beamercolorbox}[sep=0pt,wd=\beamertitlebox,#1]{date}
+    \hskip-10pt%
+    \begin{beamercolorbox}[sep=0pt, wd=\beamertitlebox, #1]{date}
       \usebeamerfont{date}\insertdate%
     \end{beamercolorbox}
   \endgroup
 }
 
-%========================================================
-% Footline template (usyd)
-% - Page 1: placeholder box (keeps spacing consistent)
-% - Other pages: institute label + frame number
-%========================================================
+%==============================================================================
+%                           TEMPLATE: FOOTLINE
+%==============================================================================
 \defbeamertemplate*{footline}{usyd}{%
   \ifnum\thepage=1\relax%
-    \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=4ex]{placeholder}%
+    \begin{beamercolorbox}[wd=\paperwidth, ht=3ex, dp=4ex]{placeholder}%
     \end{beamercolorbox}%
   \else
-    \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=4ex,leftskip=4em,rightskip=4em]{institute in footline}%
+    \begin{beamercolorbox}[wd=\paperwidth, ht=3ex, dp=4ex, leftskip=4em, rightskip=4em]{institute in footline}%
       University of Sydney\hfill\insertframenumber{}%
     \end{beamercolorbox}%
   \fi
 }
 
-%========================================================
-% Logo templates
-%========================================================
+%==============================================================================
+%                           TEMPLATE: ELEMENTS
+%==============================================================================
 
-% Titlepage logo templates
 \defbeamertemplate*{logo titlepage}{usyd}{%
   \includegraphics[width=2.4cm]{\USYD@logo}%
 }
+
 \defbeamertemplate*{affiliationlogo titlepage}{usyd}{%
-  % Only render if an affiliation logo was provided
   \ifdefempty{\USYD@affiliationlogo}{}{%
     \includegraphics[width=2.2cm]{\USYD@affiliationlogo}%
   }%
 }
 
-% Generic logo template (not title page)
 \defbeamertemplate*{logo}{usyd}{%
   \includegraphics[height=3em]{\USYD@logo}%
 }
 
-%========================================================
-% Layout templates
-%========================================================
-
-% No sidebar
 \defbeamertemplate*{sidebar right}{usyd}{}
 
-% Frametitle styling
 \defbeamertemplate*{frametitle}{usyd}[1][]{
-  \vskip12pt
+  \vskip12pt%
   \begin{beamercolorbox}[#1]{frametitle}
     \usebeamerfont{frametitle}\insertframetitle\par%
-  \end{beamercolorbox}
+  \end{beamercolorbox}%
 }
 
-%========================================================
-% End: restore normal mode handling
-%========================================================
+%==============================================================================
+%                               MODE: ALL
+%==============================================================================
 \mode<all>
