@@ -4,7 +4,7 @@
 %==============================================================================
 %                               THEME SETUP
 %==============================================================================
-\usepackage[orientation=portrait, size=a0, scale=0.9]{beamerposter}
+\usepackage[orientation=portrait, size=a0, scale=1.0]{beamerposter}
 \mode<presentation>{\usetheme{usydposter}}
 
 %==============================================================================
@@ -12,8 +12,17 @@
 %==============================================================================
 \usepackage[australian]{babel} % Localization
 \usepackage{bookmark}          % PDF Bookmarks
-\usepackage{amsmath}           % Math Environments
+\usepackage{amsmath, amsfonts}           % Math Environments
 \usepackage{graphicx}          % Image Handling
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\usepackage[backend=biber,style=phys]{biblatex}
+\usepackage{biblatex}
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+\renewcommand*{\bibfont}{\small}
+
+\addbibresource{references.bib}
 
 % Suppress hyperref warnings for superscripts in author names
 \pdfstringdefDisableCommands{\def\textsuperscript#1{#1}}
@@ -21,23 +30,23 @@
 %==============================================================================
 %                                 METADATA
 %==============================================================================
-\title{Optimal Look-back Horizon for Time Series Forecasting \\
-       in Federated Learning}
+\title{Optimal Look-back Horizon for Time Series Forecasting in Federated Learning}
 
 \author{
   Dahao Tang\textsuperscript{1},
-  Nan Yang\textsuperscript{1},
+  Nan Yang\textsuperscript{1}\textsuperscript{3},
   Yanli Li\textsuperscript{1},
   Zhiyu Zhu\textsuperscript{2},
   Zhibo Jin\textsuperscript{2},
-  Dong Yuan\textsuperscript{1}
+  Dong Yuan\textsuperscript{1}\textsuperscript{3}
 }
 
 \institute{
-  \textsuperscript{1}The University of Sydney \qquad
+  \textsuperscript{1}The University of Sydney \\
   \textsuperscript{2}University of Technology Sydney
 
-  \texttt{dahao.tang@sydney.edu.au, n.yang@sydney.edu.au, ...}
+  % \vspace{1em}
+  \textsuperscript{3}{Corresponding authors: n.yang@sydney.edu.au, dong.yuan@sydney.edu.au}
 }
 
 %==============================================================================
@@ -47,15 +56,18 @@
 
 % --- Header Logos ---
 \logoleft{%
-  \hspace{1.5em}
-  % Ensure AAAILogo.pdf exists in your local assets folder
-  \includegraphics[height=3.6cm]{AAAILogo}%
+  \includegraphics[height=4.2cm]{AAAILogo}%
 }
 
 \logoright{%
-  % USYD and UTS logos
-  \includegraphics[height=5cm]{USYDLogo}\hspace{0.1em}%
-  \includegraphics[height=10cm]{UTSLogo}\hspace{0.1em}%
+  \begin{tikzpicture}
+    \node[inner sep=1em] (usyd) {
+      \includegraphics[height=5cm]{USYDLogo}
+    }; 
+    \node[inner sep=0pt, below=-3cm of usyd] (uts) {
+      \includegraphics[height=10cm]{UTSLogo}
+    };
+  \end{tikzpicture}
 }
 
 % --- Footer Contact Info ---
@@ -82,7 +94,7 @@
 %==============================================================================
 %                             DOCUMENT LAYOUT
 %==============================================================================
-\setlength{\columnsep}{2.2cm}
+\setlength{\columnsep}{1cm}
 
 \begin{document}
 
@@ -92,32 +104,34 @@
     %--------------------------------------------------------------------------
     %                               LEFT COLUMN
     %--------------------------------------------------------------------------
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.49\textwidth}
 
       % --- Abstract ---
       \begin{block}{Abstract}
-        Selecting an appropriate look-back horizon remains a fundamental challenge in time series forecasting (TSF), 
-        particularly in federated learning scenarios where data is decentralized, heterogeneous, and often non-independent. 
-        While recent work has explored horizon selection by preserving forecasting-relevant information in an intrinsic space, 
+        Selecting an appropriate look-back horizon remains a fundamental challenge 
+        in time series forecasting (TSF), particularly in federated learning scenarios where 
+        data is decentralized, heterogeneous, and often non-independent. While recent work has explored 
+        horizon selection by preserving forecasting-relevant information in an intrinsic space, 
         these approaches are primarily restricted to centralized and independently distributed settings. 
-        This paper presents a principled framework for adaptive horizon selection in federated time series forecasting 
-        through an intrinsic space formulation. We introduce a synthetic data generator (SDG) that 
-        captures essential temporal structures in client data—including autoregressive dependencies, seasonality, and trend—while 
-        incorporating client-specific heterogeneity. Building on this model, we define a transformation that 
+        This paper presents a principled framework for adaptive horizon selection in 
+        federated time series forecasting through an intrinsic space formulation. We introduce 
+        a synthetic data generator (SDG) that captures essential temporal structures in 
+        client data, including autoregressive dependencies, seasonality, and trend, 
+        while incorporating client-specific heterogeneity. Building on this model, we define a transformation that 
         maps time series windows into an intrinsic representation space with well-defined geometric and statistical properties. 
         We then derive a decomposition of the forecasting loss into a Bayesian term (irreducible uncertainty) 
         and an approximation term (finite-sample effects and limited model capacity). 
         Our analysis shows that while increasing the look-back horizon improves identifiability, 
-        it also increases approximation error. 
-        We prove that the total forecasting loss is minimized at the smallest horizon where the irreducible loss starts to saturate.
+        it also increases approximation error. We prove that the total forecasting loss is 
+        minimized at the smallest horizon where the irreducible loss starts to saturate.
       \end{block}
 
       % --- Introduction ---
       \begin{block}{Introduction}
-        Selecting the right look-back horizon is critical for time series forecasting, yet existing scaling-law insights assume centralized, 
-        IID data and fail under the heterogeneity of federated learning. In decentralized settings, clients differ in dynamics, noise, 
-        and sequence structure, making a fixed global horizon suboptimal. We introduce a principled framework that uses a structured 
-        Synthetic Data Generator to capture shared temporal patterns and client-specific variability. 
+        Selecting the right look-back horizon is critical for time series forecasting, 
+        yet existing scaling-law insights assume centralized, IID data and fail under the heterogeneity of federated learning. 
+        In decentralized settings, clients differ in dynamics, noise, and sequence structure, making a fixed global horizon suboptimal. 
+        We introduce a principled framework that uses a structured Synthetic Data Generator to capture shared temporal patterns and client-specific variability. 
         
         Our contributions include:
         \begin{itemize}
@@ -133,11 +147,13 @@
           \centering
           % Ensure this PDF exists in your local 'assets' folder
           \includegraphics[width=0.9\columnwidth]{real_vs_synthetic_smoothed.pdf} 
-          \caption{Comparison between real-world data and data generated by the SDG. The close alignment indicates that the SDG effectively captures the patterns present in real data.}
+          \caption{Comparison between real-world data and data generated by the SDG.
+          The close alignment indicates that the SDG effectively captures the patterns present in real data.}
           \label{fig1}
         \end{figure}
 
-        An SDG is a parametric model designed to simulate univariate time series data characterized by seasonality, temporal dependence (AR memory), and trend. For a given client $k$, feature $f$, and time step $t$, the observation $\hat{x}_{f,t,k}$ is:
+        An SDG is a parametric model designed to simulate univariate time series data characterized by seasonality, 
+        temporal dependence (AR memory), and trend. For a given client $k$, feature $f$, and time step $t$, the observation $\hat{x}_{f,t,k}$ is:
         \begin{equation}
         \label{eq:sdg}
           \begin{split}
@@ -152,7 +168,8 @@
 
       % --- Feature Skewness ---
       \begin{block}{Feature Skewness Formulation}
-        In federated learning, each client observes a different distribution of the same features (feature skew). We model this heterogeneity as:
+        In federated learning, each client observes a different distribution of the same features (feature skew). 
+        We model this heterogeneity as:
         \begin{equation}
             x_{f,t,k} = \Lambda_{f,k} \tilde{x}_{f,t,k} + \delta_{f,k}
         \end{equation}
@@ -161,7 +178,8 @@
 
       % --- Intrinsic Space ---
       \begin{block}{Intrinsic Space Construction}
-        We construct a geometry-aware representation space that captures the essential temporal structure of non-IID time series. The transformation pipeline involves:
+        We construct a geometry-aware representation space that captures the essential temporal structure of non-IID time series. 
+        The transformation pipeline involves:
         (1) Client-wise normalization; 
         (2) Window flattening; 
         (3) Global covariance estimation; 
@@ -178,7 +196,14 @@
         \label{eq:l_ar}
             \ell_{\mathrm{AR}, k} = \left\lceil \frac{\ln(1 / (1 - \epsilon))}{- \ln \rho_k} \right\rceil, \ \epsilon\in(0,1)
         \end{equation}
-        where $\rho_k \in (0,1)$ is the spectral radius of the AR companion matrix.
+        where $\rho_k \in (0,1)$ is the spectral radius of the AR companion matrix. 
+        $g_k(H)$ reflects the resolved seasonal complexity:
+        \begin{equation}
+            g_k(H) = 2 \sum_{j=1}^{J} w_{j,k} \cdot \min \left(1, \frac{H}{T_{j,k}^*} \right),
+        \end{equation}
+        \begin{equation}
+            w_{j,k} = \frac{\sum_{f=1}^{F} A_{f,j,k}^{2}}{\sum_{f=1}^{F}\sum_{j=1}^{J} A_{f,j,k}^{2}}.
+        \end{equation}
       \end{block}
 
     \end{column}
@@ -186,30 +211,121 @@
     %--------------------------------------------------------------------------
     %                               RIGHT COLUMN
     %--------------------------------------------------------------------------
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.49\textwidth}
 
-      % --- Loss Decomposition ---
       \begin{block}{Loss Decomposition}
-        The global prediction loss decomposes as:
-        \[
-          L(H) = L_{\mathrm{Bayes}}(H) + L_{\mathrm{approx}}(H),
-        \]
-        separating irreducible client uncertainty from approximation error induced by finite samples and model capacity.
+
+        We now formalize this precise decomposition of the prediction loss in the federated setting, 
+        showing how the Bayesian and approximation components arise directly from the client-specific 
+        data-generating distributions and the server-side evaluation protocol.
+
+        \begin{theorem}[Federated Loss Decomposition]
+          \label{thm:federated_loss_decomposition}
+
+          For each client $k \in \{1,\dots,K\}$, let $(U_k, V_k)$ denote its data-generating pair, 
+          where $U_k$ takes values in a measurable input space $\mathcal{M}(H)$ and $V_k$ in an output space $\mathcal{M}(S)$, 
+          both embedded in a real Hilbert space $(\mathcal{H},\|\cdot\|)$ with the associated Borel $\sigma$-algebras. 
+
+          Let $m_k^*(u) := \mathbb{E}[\ V_k \mid U_k = u\ ]$ be the client-specific Bayesian predictor, defined $P_{U_k}$–almost everywhere. 
+          For any measurable, square-integrable predictor $m : \mathcal{M}(H) \to \mathcal{M}(S)$, the server's global predictive loss is
+          \begin{equation}
+              L(H,S;m) := \mathbb{E}_{k\sim\pi}\Big[ \mathbb{E} \big[\ \|\ V_k - m(U_k)\ \|^2 \big] \Big]
+          \end{equation}
+          where $\pi=(\pi_1,\dots,\pi_K)$ is any distribution over clients and the inner expectation is over $(U_k, V_k)$ under client $k$'s distribution.
+          Then the loss decomposes as: 
+          \begin{equation}
+              L(H,S;m) = L_{\mathrm{Bayes}}(H,S) + L_{\mathrm{approx}}(H,S;m),
+          \end{equation}
+          where the federated Bayesian loss is
+          \begin{equation}
+              L_{\mathrm{Bayes}}(H,S) := \mathbb{E}_{k\sim\pi}\Big[ \mathbb{E}\big[\ \|\ V_k - m_k^*(U_k)\, |^2 \big] \Big],
+          \end{equation}
+          and the federated approximation loss is
+          \begin{equation}
+              L_{\mathrm{approx}}(H,S;m) := \mathbb{E}_{k\sim\pi}\Big[ \mathbb{E}\big[\ \|\ m_k^*(U_k) - m(U_k)\ \|^2 \big] \Big].
+          \end{equation}
+
+          In particular, the total loss separates into the expected irreducible (client-wise Bayes) component and 
+          the expected approximation error of the global predictor relative to each client’s Bayes-optimal rule.
+          Please refer to the Extended Version for the proof.
+
+        \end{theorem}
+                
       \end{block}
 
-      % --- Smallest Sufficient Horizon ---
       \begin{block}{Smallest Sufficient Horizon}
-        For tolerance $\delta > 0$, define:
-        \[
-          H_k^*(\delta) = \min\{H : |\Delta L_{\mathrm{Bayes}}^{(k)}(H)| \le \delta\}.
-        \]
-        This is the smallest horizon at which additional history yields negligible irreducible error reduction.
+
+        Now we define a key concept, the smallest sufficient horizon, which serves as the optimal look-back horizon that minimizes the forecasting loss.
+
+        Formaly, for any tolerance $\delta>0$, define the smallest sufficient horizon as
+        \begin{equation}
+            H_k^*(\delta) := \min\{H : |\Delta L_{\mathrm{Bayes}}^{(k)}(H)| \le \delta\},
+        \end{equation}
+        at which the Bayesian loss has effectively saturated: further historical context improves the irreducible loss by at most $\delta$. 
+        Together, these monotonicity properties imply a unimodal structure for the
+        total loss.
+        
       \end{block}
 
-      % --- Conclusion ---
-      \begin{block}{Conclusion}
-        The total forecasting loss is unimodal in horizon length. The smallest sufficient horizon minimizes loss by balancing information identifiability against approximation error growth, yielding a principled, client-adaptive horizon selection rule.
+      \begin{block}{Unimodality and Optimal Horizon}
+          
+        If for a given $\delta>0$ the Bayesian loss satisfies $\Delta L_{\mathrm{Bayes}}^{(k)}(H) \le -\delta$ for all $H < H_k^*(\delta)$, 
+        and the approximation loss satisfies $\Delta L_{\mathrm{approx}}^{(k)}(H;m) \ge \delta$ for all $H \ge H_k^*(\delta)$, then the combined loss obeys that $L^{(k)}(H)$ decreases on $[1, H_k^*(\delta)]$, and $L^{(k)}(H)$ increases on $[H_k^*(\delta),\infty)$. 
+
+        Consequently, $H_k^*(\delta) \in \arg\min_{H\in\mathbb{N}} L^{(k)}(H)$ with uniqueness up to integer ties.
+
+
+        \begin{proof}
+
+        From the Bayesian loss analysis, increasing $H$ reduces seasonal/phase ambiguity and uncovers AR structure, 
+        but only up to a finite coverage horizon. Hence, there exists $H_0$ such that
+        \begin{equation}
+            \Delta L_{\mathrm{Bayes}}(H,S) < 0 \quad (H < H_0),
+        \end{equation}
+        while for any $\delta>0$ we can choose $H_0$ large enough so that
+        \begin{equation}
+            \Delta L_{\mathrm{Bayes}}(H,S) \ge -\delta \quad (H \ge H_0).
+        \end{equation}
+
+        For the approximation term, the curvature–variance bound on the intrinsic manifold shows that the error grows with 
+        both the intrinsic dimension $d_I(H)$ and the factor $H/D$ coming from the effective sample size per window ($\propto D/(HN)$). 
+        Since $d_I(H)$ is non-decreasing and eventually saturated, while $H/D$ grows linearly, there exists $\eta>0$, independent of $H$, such that
+        \begin{equation}
+            \Delta L_{\mathrm{approx}}(H,S) \ge \eta \quad (H \ge H_0).
+        \end{equation}
+
+        Fix any $\delta \in (0,\eta)$ and define $H^*(\delta)$ as the smallest $H \ge H_0$ with $\Delta L_{\mathrm{Bayes}}(H,S) \ge -\delta$. 
+        Then for $H < H^*(\delta)$, we have $\Delta L_{\mathrm{Bayes}}(H,S) < -\delta$ and $\Delta L_{\mathrm{approx}}(H,S) \ge 0$, so $ \Delta L(H,S) = \Delta L_{\mathrm{Bayes}}(H,S) + \Delta L_{\mathrm{approx}}(H,S) < -\delta < 0$, and $L(H,S)$ is strictly decreasing. For $H \ge H^*(\delta)$, we have $\Delta L_{\mathrm{Bayes}}(H,S) \ge -\delta$ and $\Delta L_{\mathrm{approx}}(H,S) \ge \eta$, hence $\Delta L(H,S) \ \ge \ -\delta + \eta \ > \ 0$, so $L(H,S)$ is strictly increasing.
+
+        Thus $L(H, S)$ decreases up to $H^*(\delta)$ and increases thereafter, 
+        so it is unimodal in $H$ and attains its unique minimum at $H^*(\delta)$ (up to trivial ties), as claimed.
+
+        \end{proof}
+
+        \noindent
+        Hence, before $H_k^*(\delta)$, the reduction in irreducible error outweighs the increase in approximation error; 
+        afterwards, the opposite holds. The total loss thus has a single optimal basin, and the smallest sufficient horizon attains the minimum.
+
       \end{block}
+
+      \begin{block}{Limitations and Discussion}
+
+        This work introduces a principled framework for federated time-series forecasting under non-IID data, 
+        built on a structured synthetic data generator (SDG) and an intrinsic representation space. 
+        The formulation enables a clean decomposition of forecasting error and yields a provably optimal look-back horizon.
+
+        The SDG captures key components, but assumes Gaussian innovations, local stationarity, and stable AR structure, 
+        limiting its ability to represent regime shifts, nonlinear patterns, or strong feature interactions. 
+        Estimating global covariance also requires privacy-aware aggregation, and treating overlapping windows as independent may overstate sample size.
+
+        These assumptions, while standard in theory, are chosen to clearly isolate the effects of horizon length and heterogeneity, 
+        providing the first provable foundation for optimal horizon selection and a basis for future extensions. 
+        
+      \end{block}
+
+      % \begin{block}{References}
+      %   \printbibliography
+      % \end{block}
 
     \end{column}
 

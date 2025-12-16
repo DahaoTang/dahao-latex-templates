@@ -17,6 +17,15 @@
 \usepackage{bookmark}  % Fixes PDF bookmarks in Beamer
 \usepackage{booktabs}  % Professional tables
 \usepackage{listings}  % Code formatting
+\usepackage[
+  backend=biber,
+  style=ieee,
+  sorting=ynt
+]{biblatex}
+\addbibresource{refs.bib}
+\AtBeginBibliography{
+  \tiny % or \scriptsize, etc.
+}
 
 %==============================================================================
 %                             LISTINGS CONFIG
@@ -122,6 +131,12 @@ def softmax(xs):
 
 print(softmax([1.0, 2.0, 3.0]))
 \end{lstlisting}
+\end{frame}
+
+\section{Reference}
+\begin{frame}[allowframebreaks, noframenumbering]
+  \frametitle{Reference}
+  \printbibliography[heading=none]
 \end{frame}
 
 \end{document}

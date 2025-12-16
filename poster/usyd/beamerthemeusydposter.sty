@@ -81,7 +81,7 @@
     colback=usydwhite,
     colframe=usydred,
     boxsep=0.6em,
-    boxrule=0.8pt,
+    boxrule=2pt,
     left=0.8em,
     right=0.8em,
     top=0.7em,
@@ -95,7 +95,7 @@
   \begin{tcolorbox}[usydblock={\insertblocktitle}]%
 }
 \setbeamertemplate{block end}{%
-  \end{tcolorbox}\vspace{0.9em}%
+  \end{tcolorbox}\vspace{0.3em}%
 }
 
 %==============================================================================
@@ -103,17 +103,17 @@
 %==============================================================================
 \setbeamertemplate{headline}{
   \vbox{%
-    \begin{beamercolorbox}[wd=\paperwidth, sep=1cm]{headline}
+    \begin{beamercolorbox}[wd=\paperwidth, sep=0.5cm]{headline}
       \begin{columns}[c]
         
         % 1. Left Slot
-        \begin{column}{0.2\paperwidth}
+        \begin{column}{0.25\paperwidth}
           \centering
           \USYD@poster@logoleftcontent
         \end{column}
 
         % 2. Center Slot
-        \begin{column}{0.6\paperwidth}
+        \begin{column}{0.5\paperwidth}
           \centering
           \usebeamercolor{title in headline}
           {\bfseries \Huge \inserttitle\par}
@@ -123,7 +123,7 @@
         \end{column}
 
         % 3. Right Slot
-        \begin{column}{0.2\paperwidth}
+        \begin{column}{0.25\paperwidth}
           \centering
           \USYD@poster@logorightcontent
         \end{column}
@@ -142,10 +142,10 @@
 % This is the default footer. Your poster.tex overrides this with custom info.
 \setbeamertemplate{footline}{%
   \leavevmode%
-  % \begin{beamercolorbox}[wd=\paperwidth]{upper separation line foot}
-  %   \rule{0pt}{3pt}%
-  % \end{beamercolorbox}%
-  % \nointerlineskip%
+  \begin{beamercolorbox}[wd=\paperwidth]{upper separation line foot}
+    \rule{0pt}{3pt}%
+  \end{beamercolorbox}%
+  \nointerlineskip%
   \begin{beamercolorbox}[ht=3.5ex, leftskip=1.5em, rightskip=1.5em]{author in head/foot}%
     \hfill\vskip1ex%
   \end{beamercolorbox}%
