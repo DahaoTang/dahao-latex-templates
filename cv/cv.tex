@@ -1,0 +1,153 @@
+\documentclass[10pt, a4paper]{article}
+
+% =============================
+% Packages & Setup
+% =============================
+\usepackage[left=0.5in, top=0.5in, right=0.5in, bottom=0.5in]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{bookmark}
+
+% Define custom dark blue color for links
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.5}
+
+% Link settings
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,
+    urlcolor=darkblue, 
+}
+
+% Remove page numbers
+\pagestyle{empty}
+
+% =============================
+% Custom Commands (Variables)
+% =============================
+\newcommand{\MyNameEN}{Dahao Tang} 
+\newcommand{\MyEmail}{dahao.tang@sydney.edu.au}
+\newcommand{\MyPhone}{+61 04 1663 1588}
+\newcommand{\MyWebsite}{https://dahaotang.com/}
+\newcommand{\MyGitHub}{https://github.com/DahaoTang}
+\newcommand{\MyLinkedIn}{https://www.linkedin.com/in/dahaotang/}
+
+% =============================
+% Formatting Definitions
+% =============================
+
+% Section Header Format
+\titleformat{\section}
+  {\large\bfseries\uppercase} 
+  {}                          
+  {0em}                       
+  {}                          
+  [\titlerule]                
+
+\titlespacing{\section}{0pt}{10pt}{5pt} 
+
+% Education Entry Format
+\newcommand{\EducationEntry}[4]{
+  \noindent \textbf{#1} \hfill #2 \\
+  \textit{#3}, #4 \par
+  \vspace{4pt}
+}
+
+% Publication Entry Format
+\newcommand{\PublicationEntry}[3]{
+  \noindent \textbf{#1} \hfill #2 \\
+  {\small #3} \par
+  \vspace{4pt}
+}
+
+% Experience Entry Format
+\newcommand{\ExperienceEntry}[4]{
+  \noindent \textbf{#1} | \textit{#3} \hfill #2 \\
+  {\small #4} \par
+  \vspace{4pt}
+}
+
+% =============================
+% Document Content
+% =============================
+\begin{document}
+
+% --- Header ---
+\begin{center}
+  {\Huge \textbf{\MyNameEN}} \\ \vspace{5pt}
+  \small
+  Email: \MyEmail \ \textbullet \ \ 
+  Phone: \MyPhone \ \textbullet \ \ 
+  Website: \href{\MyWebsite}{\MyWebsite} \\
+  GitHub: \href{\MyGitHub}{\MyGitHub} \ \textbullet \ \  
+  LinkedIn: \href{\MyLinkedIn}{\MyLinkedIn}
+\end{center}
+
+\vspace{-5pt}
+
+% --- Education ---
+\section{Education}
+
+\EducationEntry{University of Sydney}{Mar 2026 -- Present}
+{Master of Philosophy}{AI \& Biology, co-supervised by Prof. David James and Prof. Jinman Kim}
+
+\EducationEntry{University of Sydney}{Feb 2021 -- Nov 2025}
+{Bachelor of Advanced Computing}{Computer Science}
+
+\EducationEntry{University of Sydney}{Feb 2021 -- Nov 2025}
+{Bachelor of Commerce}{Finance}
+
+% --- Publications ---
+\section{Publications}
+\PublicationEntry{Optimal Look-back Horizon for Time Series Forecasting in Federated Learning}{AAAI 2026 Oral}
+{\underline{Dahao Tang}, Nan Yang, Yanli Li, Zhiyu Zhu, Zhibo Jin, Dong Yuan}
+
+\PublicationEntry{Stability-Driven CNN Training with Lyapunov-Based Dynamic Learning Rate}{ADC 2024}
+{\underline{Dahao Tang}, Nan Yang, Yunkun Deng, Yuning Zhang, Abubakar Sadiq Sani, Dong Yuan}
+
+\PublicationEntry{Adaptformer: An Adaptive Multimodel Deep Decomposition Approach for Power Consumption Forecasting}{ADMA 2024}
+{Nan Yang, Yuning Zhang, Yunqi Wang, \underline{Dahao Tang}, Yanli Li, Dong Yuan}
+
+% --- Work Experience ---
+\section{Work Experience}
+\ExperienceEntry{University of Sydney}{Nov 2024 -- Present}
+{Research Assistant, School of Life and Environment Science}
+{Lead developer for ProteHome at the David James Lab; engineering tools to support biological data analysis.}
+
+\ExperienceEntry{University of Sydney}{Aug 2024 -- Feb 2025}
+{Academic Tutor, School of Computer Science}
+{ISYS2120: Data and Information Management (2024 S2), guiding students through database concepts and SQL implementation.}
+
+% --- Projects ---
+\section{Projects Experience}
+\ExperienceEntry{ProteHome}{July 2024 -- Present}
+{Research Assistant, Web Development}
+{Spearheaded website refactoring and architected the full-stack solution using Next.js, Django, and PostgreSQL. 
+Implemented Tailwind CSS to modernize the UI and continuously contributed to feature development and optimization.}
+
+\ExperienceEntry{ioulia.ai}{Jan 2024 -- July 2024}
+{Co-founder}
+{Designed the technical roadmap and engineered the Minimum Viable Product (MVP) from scratch. 
+Optimized product performance and LLM responses by implementing advanced prompt engineering techniques such as Chain-of-Thought (CoT).}
+
+\ExperienceEntry{GigHero}{Apr 2023 -- Aug 2024}
+{Co-founder}
+{Developed a two-sided online marketplace MVP for on-site services using React and Express.}
+
+\ExperienceEntry{Searten}{Aug 2023 -- Nov 2023}
+{University Project, Project Manager, Full-stack Developer}
+{Led a cross-functional team to develop a web-based platform MVP, overseeing the project lifecycle.}
+
+\ExperienceEntry{File System Implementation with FUSE}{2022}
+{University Project}
+{Implemented a functional file system in C using the FUSE interface, 
+engineered support for large file handling and hierarchical directory structures.}
+
+\ExperienceEntry{OS Scheduler Implementation}{2022}
+{University Project}
+{Designed and implemented an operating system scheduler in C.
+Integrated Round Robin and Multi-Level Feedback Queue (MLFQ) algorithms to optimize process execution efficiency.}
+
+\end{document}

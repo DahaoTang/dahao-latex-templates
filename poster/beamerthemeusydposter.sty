@@ -1,0 +1,111 @@
+\ProvidesPackage{beamerthemeusydposter}[USYD beamer poster theme]
+
+\mode<presentation>
+
+%========================================================
+% Dependencies
+%========================================================
+\RequirePackage{graphicx}
+\RequirePackage{etoolbox}
+\RequirePackage{tcolorbox}
+\tcbuselibrary{raster,skins}
+
+%========================================================
+% Theme Settings
+%========================================================
+\usecolortheme{usyd}
+\usefonttheme{usyd}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+% Spacing defaults
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+
+\graphicspath{{assets/}}
+
+%========================================================
+% Internal Variables & Logo Logic
+%========================================================
+\gdef\USYD@logo{USYDLogo}
+\gdef\USYD@affiliationlogo{}
+
+% Defaults
+\gdef\USYD@poster@logoleftcontent{%
+  \ifdefempty{\USYD@affiliationlogo}{}{\includegraphics[height=8cm]{\USYD@affiliationlogo}}%
+}
+\gdef\USYD@poster@logorightcontent{\includegraphics[height=8cm]{\USYD@logo}}
+
+% Configuration Commands
+\def\logo#1{\gdef\USYD@logo{#1}\logoright{\includegraphics[height=8cm]{#1}}}
+\def\affiliationlogo#1{\gdef\USYD@affiliationlogo{#1}\logoleft{\includegraphics[height=8cm]{#1}}}
+\def\logoleft#1{\gdef\USYD@poster@logoleftcontent{#1}}
+\def\logoright#1{\gdef\USYD@poster@logorightcontent{#1}}
+
+%========================================================
+% Block Styling (tcolorbox)
+%========================================================
+\tcbset{
+  usydblock/.style={
+    enhanced, sharp corners,
+    colback=usydwhite, colframe=usydred,
+    boxsep=0.6em, boxrule=0.8pt,
+    left=0.8em, right=0.8em, top=0.7em, bottom=0.7em,
+    fonttitle=\bfseries, title={#1},
+  }
+}
+
+\setbeamertemplate{block begin}{\begin{tcolorbox}[usydblock={\insertblocktitle}]}
+\setbeamertemplate{block end}{\end{tcolorbox}\vspace{0.9em}}
+
+%========================================================
+% Headline Template
+%========================================================
+\setbeamertemplate{headline}{
+  \leavevmode
+  \begin{beamercolorbox}[wd=\paperwidth, sep=2cm]{headline}
+    \begin{columns}[c]
+      
+      % Left Logo
+      \begin{column}{0.2\paperwidth}
+        \centering
+        \USYD@poster@logoleftcontent
+      \end{column}
+
+      % Center Title
+      \begin{column}{0.6\paperwidth}
+        \centering
+        \usebeamercolor{title in headline}
+        {\bfseries \Huge \inserttitle\par}
+        \vspace{1em}
+        {\Large \insertauthor\par}
+        {\large \insertinstitute\par}
+      \end{column}
+
+      % Right Logo
+      \begin{column}{0.2\paperwidth}
+        \centering
+        \USYD@poster@logorightcontent
+      \end{column}
+
+    \end{columns}
+  \end{beamercolorbox}
+  
+  % Separation line
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.5cm]{lower separation line head}
+  \end{beamercolorbox}
+}
+
+%========================================================
+% Footline Template
+%========================================================
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \begin{beamercolorbox}[ht=3.5ex,leftskip=1.5em,rightskip=1.5em]{author in head/foot}%
+    \hfill\vskip1ex%
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=\paperwidth]{lower separation line foot}%
+  \end{beamercolorbox}%
+}
+
+\mode<all>

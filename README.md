@@ -19,3 +19,7 @@ To build:
 1. Just stay at the root directory (or actually no matter where you are).
 2. Modify the `slides.tex` file.
 3. Save it -- it will automatically be built. Only the `slides.pdf` will be kept after the build -- all the other files will be removed.
+
+## How to maintain the template
+
+The USYD theme-related files across different folders (e.g., `./slides` and `./poster`) are **_exactly_** the same when they have a same name.
