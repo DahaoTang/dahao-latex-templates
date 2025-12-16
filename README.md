@@ -5,21 +5,36 @@ This repo serves as the template for LaTeX-based projects, e.g., slides, posters
 The current templates include:
 
 ```
-./slides/ 		# templates for slides
-├── casual		# a deep-blue colour theme template
-└── usyd		# a USYD-inspired colour theme template
+.
+├── cv				# a standard latex cv
+├── poster
+│   └── usyd		# a USYD-inspired colour theme template
+└── slides
+    ├── casual		# a deep-blue theme
+    └── usyd		# a USYD-inspired colour theme template
 ```
 
 ## How to use
 
-For **_Slides_**:
+_Notes: the following building process triggered by savinf the `.tex` file can only be successful when it builds successfully._
 
-To build:
+To build with a Makefile:
 
-1. Just stay at the root directory (or actually no matter where you are).
-2. Modify the `slides.tex` file.
-3. Save it -- it will automatically be built. Only the `slides.pdf` will be kept after the build -- all the other files will be removed.
+1. In the terminal, just stay at the root directory (or actually no matter where you are).
+2. Go to `./cv`, `./poster` or `./slides` folder depending on your need.
+3. Modify the `xxx.tex` file.
+4. Save it -- it will automatically be built. Only the `slides.pdf` will be kept after the build -- all the other files will be removed.
+
+To build manually:
+
+1. In the terminal, navigate to the folder where `.tex` is at.
+2. Execute `xelatex <cv/poster/slides>.tex && xelatex <cv/poster/slides>.tex`. Note that, it sometimes requires to ask xelatex to build twice to get the final build.
 
 ## How to maintain the template
 
-The USYD theme-related files across different folders (e.g., `./slides` and `./poster`) are **_exactly_** the same when they have a same name.
+The USYD theme-related files across different folders (e.g., `./slides` and `./poster`) are **_exactly_** the same _when they have a same name_. Currently, this include:
+
+```
+beamercolorthemeusyd.sty
+beamerfontthemeusyd.sty
+```
