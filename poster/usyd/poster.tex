@@ -54,41 +54,32 @@
     %--------------------------------------------------------------------------
     \begin{column}{0.49\textwidth}
 
-      \begin{block}{Abstract}
-        Selecting an appropriate look-back horizon remains a fundamental challenge 
-        in time series forecasting (TSF), particularly in federated learning scenarios where 
-        data is decentralized, heterogeneous, and often non-independent. 
-        While recent work has explored horizon selection by preserving forecasting, 
-        relevant information in an intrinsic space, these approaches are primarily 
-        restricted to centralized and independently distributed settings. 
-        This paper presents a principled framework for adaptive horizon selection in 
-        federated time series forecasting through an intrinsic space formulation. 
-        We introduce a synthetic data generator (SDG) that captures essential temporal structures 
-        in client data, including autoregressive dependencies, seasonality, and trend, 
-        while incorporating client-specific heterogeneity. Building on this model, 
-        we define a transformation that maps time series windows into an 
-        intrinsic representation space with well-defined geometric and statistical properties. 
-        We then derive a decomposition of the forecasting loss into a 
-        Bayesian term (irreducible uncertainty) and an approximation term 
-        (finite-sample effects and limited model capacity). Our analysis shows that 
-        while increasing the look-back horizon improves identifiability, 
-        it also increases approximation error. We prove that the total forecasting loss is 
-        minimized at the smallest horizon where the irreducible loss starts to saturate.
+      \begin{block}{Introduction}
+        Selecting the optimal look-back horizon in Federated Learning (FL) is challenging due to non-IID data, 
+        where client-specific dynamics render fixed global horizons suboptimal. 
+        While recent work has explored horizon selection by preserving forecasting-relevant information in an intrinsic space,
+        they fail to account for decentralized heterogeneity \cite{shi2024scaling}. 
+        To address this, we propose a principled framework leveraging a Synthetic Data Generator (SDG) to capture 
+        temporal structures (AR, seasonality, trend) and client heterogeneity. By mapping data to an intrinsic space 
+        with well-defined geometric and statistical properties, we decompose the forecasting loss into Bayesian (irreducible) and approximation terms. 
+        We prove that a fundamental trade-off exists under the non-IID FL settings: 
+        the total loss is minimized at the smallest horizon where the irreducible loss saturates.
       \end{block}
 
-      \begin{block}{Introduction}
-        Selecting the right look-back horizon is critical for time series forecasting, 
-        yet existing scaling-law insights assume centralized, IID data and fail under 
-        the heterogeneity of federated learning \cite{shi2024scaling}. In decentralized settings, 
-        clients differ in dynamics, noise, and sequence structure, making a fixed global horizon suboptimal. 
-        We introduce a principled framework that uses a structured Synthetic Data Generator to 
-        capture shared temporal patterns and client-specific variability. 
-        Our contributions include:
+      \begin{block}{Key Contributions}
+        We propose a principled theoretical framework for horizon selection in non-IID federated learning:
         \begin{itemize}
-          \item A geometry-preserving intrinsic space for heterogeneous multivariate series.
-          \item A tight decomposition linking horizon length to Bayesian and approximation errors.
-          \item A proof that forecasting loss is unimodal in horizon size, yielding a 
-                client-adaptive optimal horizon criterion.
+          \item \textbf{\color{usydred}Constructive Intrinsic Space via SDG:}
+          We introduce a Synthetic Data Generator (SDG) that explicitly models temporal dynamics (autoregression, seasonality, trend) and client heterogeneity.
+          This allows us to construct a geometry-preserving intrinsic space and derive a computable Intrinsic Dimension $d_{I,k}(H)$ based on signal saturation.
+          \item \textbf{\color{usydred}Federated Loss Decomposition:}
+          We establish a tight decomposition of predictive loss into irreducible (Bayesian) and approximation components, 
+          each analytically tied to the structural elements of time series data (e.g., AR memory, seasonality, trend) and 
+          the look-back horizon. Our analysis uncovers the fundamental bias–variance trade-off that governs forecasting performance in federated settings.
+          \item \textbf{\color{usydred}Provably Optimal Horizons ($H_k^*$ and $H^*_{server}$):}
+          We prove that the total loss is unimodal with respect to the horizon length and identify the smallest sufficient horizon as its global minimizer. 
+          This result provides the first rigorous criterion for horizon selection in time series forecasting and 
+          introduces a new design principle for model construction under sample-limited, heterogeneous environments.
         \end{itemize}
       \end{block}
 

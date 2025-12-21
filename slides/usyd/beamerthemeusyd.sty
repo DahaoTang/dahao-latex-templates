@@ -63,6 +63,12 @@
 % --- Internal Variables ---
 \gdef\USYD@logo{USYDLogo}
 \gdef\USYD@titlegraphic{USYDCover}
+\gdef\USYD@secondlogo{}
+\gdef\USYD@secondlogoopts{height=1.5cm}
+\newcommand{\secondlogo}[2][height=1.5cm]{%
+  \gdef\USYD@secondlogoopts{#1}%
+  \gdef\USYD@secondlogo{#2}%
+}
 
 %==============================================================================
 %                                1. COLOURS
@@ -231,13 +237,19 @@
       \end{scope}
 
       % 3. Logo (Layered on top)
-      \node[inner sep=0pt, anchor=base west] at (0.7, 0.5) {
-		    \includegraphics[width=3.6cm]{\USYD@logo}
+      % We name this node (mainlogo) so we can place the next one beside it
+      \node[inner sep=0pt, anchor=base west] (mainlogo) at (0.7, 0.5) {
+        \includegraphics[width=3.6cm]{\USYD@logo}
       };
 
-      \node[inner sep=0pt, anchor=base west] at (0.7, 0.5) {
-		    \includegraphics[width=3.6cm]{\USYD@logo}
-      };
+      % 4. Second Logo (Optional)
+      \ifx\USYD@secondlogo\@empty
+      \else
+        \node[inner sep=0pt, anchor=west, xshift=0.5cm] at (mainlogo.east) {
+          % \expandafter allows the options variable to be read correctly by includegraphics
+          \expandafter\includegraphics\expandafter[\USYD@secondlogoopts]{\USYD@secondlogo}
+        };
+      \fi
 
     \else
       % --- Standard Page Layout ---

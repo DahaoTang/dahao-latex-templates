@@ -13,12 +13,13 @@
   Zhiyu Zhu\textsuperscript{2},
   Zhibo Jin\textsuperscript{2},
   Dong Yuan\textsuperscript{1}
-}\vspace*{0.5em}
+}\vspace*{1.5em}
 \institute{\noindent
   \textsuperscript{1}University of Sydney \\
   \textsuperscript{2}University of Technology Sydney \\
 }
-\date{AAAI 2026}
+\date{}
+\secondlogo[height=1.8cm]{AAAI26}
 
 % --- Bib File ---
 \addbibresource{refs.bib}
@@ -36,43 +37,58 @@
 \end{frame}
 
 % --- Main ---
-\section{Introduction}
-\begin{frame}{The Gap in Time Series Forecasting (TSF)}
-  \begin{itemize}
-    \item \textbf{Look-back Horizon ($H$):} The number of past time steps used as 
-          input to predict future values.
-    \vfill
-    \item \textbf{Current Practice:} Treated as a hyperparameter selected via 
-          heuristics or cross-validation.
-    \vfill
-    \item \textbf{Trade-off:} 
-    \begin{itemize}
-      \item Too short $\to$ Missed temporal dependencies.
-      \item Too long $\to$ Overfitting and increased noise.
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-\begin{frame}{The Gap in Federated Learning (FL)}
-  \begin{itemize}
-    \item Existing theory assumes \textbf{centralized, IID} data \cite{shi2024scaling}.
-    \vfill
-    \item \textbf{FL Reality:} Data is Non-IID, heterogeneous, and distributed.
-    \vfill
-    \item A single global horizon is suboptimal for diverse clients.
-  \end{itemize}
+\section{Introduction \& Problem Gap}
+\begin{frame}{Introduction}
+  Selecting an appropriate {\color{usydred}look-back horizon} remains a fundamental challenge in 
+  time series forecasting (TSF), particularly in the federated learning (FL) scenarios 
+  where data is decentralized, heterogeneous, and often non-independent.
 \end{frame}
 
-\begin{frame}{Contributions}
-  \begin{enumerate}
-    \item \textbf{Synthetic Data Generator (SDG):} A structured generative model 
-          capturing core temporal patterns and client heterogeneity.
-    \item \textbf{Intrinsic Space Formulation:} A geometry-preserving transformation 
-          enabling rigorous comparisons across clients.
-    \item \textbf{Loss Decomposition:} Analytical breakdown of error into \textit{Bayesian}
-            (irreducible) and \textit{Approximation} (model) components.
-    \item \textbf{Optimal Horizon ($H^*$):} Proof that total loss is unimodal, 
-          allowing identification of the smallest sufficient horizon.
-  \end{enumerate}
+\begin{frame}{Problem Gap: Horizon Selection in Federated TSF}
+    \small
+    \textbf{1. Horizon Selection in Time Series Forecasting (TSF)}
+    \begin{itemize}
+        \item Traditional methods (e.g., ARIMA, LSTMs, Transformers) treat the look-back horizon as 
+              a tunable hyperparameter set via heuristics or validation, often leading to overfitting or inefficient data use
+              \cite{akaike1974new,box2015time,hochreiter1997long,lim2020temporal,zhou2021informer,woo2023deeptime,koparanov2020lookback}.
+    \end{itemize}
+    \textbf{2. Intrinsic Representation \& Scaling-Law Perspective}
+    \begin{itemize}
+        \item Shi et al (2024) introduced the idea of an intrinsic space framework and
+              decomposes forecasting loss into Bayesian (irreducible) error and
+              approximation error, but assumes centralized, IID data, and homogeneous
+              architectures \cite{shi2024scaling}.
+    \end{itemize}
+    \textbf{3. Federated Learning (FL) for TSF}
+    \begin{itemize}
+        \item Prior FL research focuses on aggregation algorithms (FedAvg, FedProx) or model architectures 
+              but does not address horizon selection, especially under the non-IID client dynamic settings 
+              \cite{mcmahan2017communication,li2020federated,perifanis2023federated}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Research Goal}
+  {\color{usydred}Goal:} Find the optimal look-back horizon for time series forecasting in
+  the non-IID data setting under the federated learning scenario.
+\end{frame}
+
+\section{Solution Pipeline \& Contributions}
+\begin{frame}{Solution Pipeline \& Contributions}
+  \footnotesize
+  We propose a principled theoretical framework for horizon selection in non-IID federated learning:
+  \begin{itemize}
+    \item \textbf{\color{usydred}Constructive Intrinsic Space via SDG:}
+    We introduce a Synthetic Data Generator (SDG) that explicitly models temporal dynamics (autoregression, seasonality, trend) and client heterogeneity.
+    This allows us to construct a geometry-preserving intrinsic space and derive a computable Intrinsic Dimension $d_{I,k}(H)$ based on signal saturation.
+    \item \textbf{\color{usydred}Federated Loss Decomposition:}
+    We establish a tight decomposition of predictive loss into irreducible (Bayesian) and approximation components, 
+    each analytically tied to the structural elements of time series data (e.g., AR memory, seasonality, trend) and 
+    the look-back horizon. Our analysis uncovers the fundamental bias–variance trade-off that governs forecasting performance in federated settings.
+    \item \textbf{\color{usydred}Provably Optimal Horizons ($H_k^*$ and $H^*_{server}$):}
+    We prove that the total loss is unimodal with respect to the horizon length and identify the smallest sufficient horizon as its global minimizer. 
+    This result provides the first rigorous criterion for horizon selection in time series forecasting and 
+    introduces a new design principle for model construction under sample-limited, heterogeneous environments.
+  \end{itemize}
 \end{frame}
 
 \section{Preliminary}
@@ -80,12 +96,13 @@
   We model the observation $\hat{x}_{f,t,k}$ for feature $f$, time $t$, and client $k$ as:
   \begin{equation}
     \label{eq:sdg}
-    \hat{x}_{f,t,k} = \underbrace{\sum_{j=1}^{J} A_{f,j,k} \sin \left( \frac{2 \pi t}{T_{f,j,k}} + \theta_{f,j,k} \right)}_{\text{Seasonality}} 
-    + \underbrace{\sum_{i=1}^{p} \phi_{k,i} x_{f,t-i,k}}_{\text{AR Memory}} 
-    + \underbrace{\beta_{f,k} t}_{\text{Trend}} 
+    \hat{x}_{f,t,k} = 
+      \underbrace{\sum_{j=1}^{J} A_{f,j,k} \cdot \sin \left( \frac{2 \pi t}{T_{f,j,k}} + \theta_{f,j,k} \right)}_{\text{Seasonality}} 
+    + \underbrace{\sum_{i=1}^{p} \phi_{k,i} \ x_{f,t-i,k}}_{\text{AR Memory}} 
+    + \underbrace{\beta_{f,k} \ t}_{\text{Trend}} 
     + \underbrace{\epsilon_{f,t,k}}_{\text{Noise}}
   \end{equation}
-
+  
   \begin{itemize}
     \item \textbf{Seasonality:} Defined by amplitude $A_{f,j,k}$, period $T_{f,j,k}$, 
           and phase $\theta$.
@@ -107,7 +124,20 @@
     \item $\delta_{f,k}$ (Mean Shift): Adjusts the mean $\mu_f$ for feature $f$ on client $k$.
   \end{itemize}
   \vspace{0.5em}
-  \textit{Significance:} This allows the framework to explicitly account for non-IID distributions where clients observe different scales of the same underlying features.
+  \textit{Significance:} This allows the framework to explicitly account for non-IID distributions where 
+  clients observe different scales of the same underlying features.
+\end{frame}
+
+\begin{frame}{Intrinsic Space Transformation}
+  We construct a geometry-aware representation space that captures the essential temporal structure of non-IID time series
+  through a transformation grounded in the SDG. The transformation pipeline proceeds in five steps: 
+  \begin{enumerate}
+    \item Client-wise normalization to remove affine feature skew and align marginal distributions
+    \item Window flattening to convert each normalized time-series segment into a fixed-length vector
+    \item Global covariance estimation and eigendecomposition to identify dominant axes of variation
+    \item Intrinsic dimension estimation based on the SDG and empirical spectrum
+    \item Projection into intrinsic space via principal components
+  \end{enumerate}
 \end{frame}
 
 \begin{frame}{Intrinsic Dimension Estimation}
@@ -127,147 +157,145 @@
 \begin{frame}{Detailed Intrinsic Components}
   \textbf{1. Effective AR Memory ($\ell_{\mathrm{AR},k}$):}
   \begin{equation}
-      \ell_{\mathrm{AR}, k} = \left\lceil \frac{\ln(1 / (1 - \epsilon))}{- \ln \rho_k} \right\rceil
+    \ell_{\mathrm{AR}, k} = \left\lceil \frac{\ln(1 / (1 - \epsilon))}{- \ln \rho_k} \right\rceil, \ \epsilon\in(0,1)
   \end{equation}
   \begin{itemize}
-      \item $\rho_k$: Spectral radius of the AR companion matrix (stability metric).
-      \item Represents the time steps needed for impulse response to decay.
+    \item $\rho_k$: Spectral radius of the AR companion matrix (stability metric).
+    \item Represents the time steps needed for impulse response to decay.
   \end{itemize}
 
   \vspace{0.5em}
   \textbf{2. Seasonal Complexity ($g_k(H)$):}
   \begin{equation}
-      g_k(H) = 2 \sum_{j=1}^{J} w_{j,k} \cdot \min \left(1, \frac{H}{T_{j,k}^*} \right)
+    g_k(H) = 2 \sum_{j=1}^{J} w_{j,k} \cdot \min \left(1, \frac{H}{T_{j,k}^*} \right)
   \end{equation}
   \begin{itemize}
-      \item Measures how many full seasonal cycles fit within horizon $H$.
-      \item Saturates when $H$ exceeds the period $T_{j,k}^*$.
+    \item Measures how many full seasonal cycles fit within horizon $H$.
+    \item Saturates when $H$ exceeds the period $T_{j,k}^*$.
   \end{itemize}
 \end{frame}
 
-% =============================================================================
-% SECTION 4: LOSS DECOMPOSITION
-% =============================================================================
 \section{Loss Analysis}
-
 \begin{frame}{Theorem 1: Federated Loss Decomposition}
-  The total server-side loss for a predictor $m$ decomposes into two distinct sources of error
-
+  The total prediction loss for a predictor $m$ decomposes into two distinct sources of error for 
+  both the client and server side:
   \begin{equation}
-      L(H,S;m) = \underbrace{L_{\mathrm{Bayes}}(H,S)}_{\text{Irreducible}} + \underbrace{L_{\mathrm{approx}}(H,S;m)}_{\text{Reducible}}
+    L(H,S;m) = \underbrace{L_{\mathrm{Bayes}}(H,S)}_{\text{Irreducible}} + \underbrace{L_{\mathrm{approx}}(H,S;m)}_{\text{Reducible}}
   \end{equation}
-
   \begin{itemize}
-      \item \textbf{Bayesian Loss ($L_{\mathrm{Bayes}}$):} The error of an ideal predictor with full knowledge of the data distribution. It reflects inherent uncertainty (noise).
-      \item \textbf{Approximation Loss ($L_{\mathrm{approx}}$):} The excess error due to using a finite-capacity model trained on finite samples, relative to the Bayes-optimal predictor.
+    \item \textbf{Bayesian Loss ($L_{\mathrm{Bayes}}$):} The error of an ideal predictor with full knowledge of 
+          the data distribution. It reflects inherent uncertainty (noise).
+    \item \textbf{Approximation Loss ($L_{\mathrm{approx}}$):} The excess error due to using a 
+          finite-capacity model trained on finite samples, relative to the Bayes-optimal predictor.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Theorem 2: Client-wise Bayesian Loss}
   For client $k$, the irreducible loss is the sum of component-wise errors:
-
   \begin{equation}
-      L_{\mathrm{Bayes}}^{(k)}(H,S) = L_{\mathrm{AR}}^{(k)}(S) + L_{\mathrm{seas}}^{(k)}(H) + L_{\mathrm{trend}}^{(k)}(H)
+    L_{\mathrm{Bayes}}^{(k)}(H,S) = L_{\mathrm{AR}}^{(k)}(S) + L_{\mathrm{seas}}^{(k)}(H) + L_{\mathrm{trend}}^{(k)}(H)
   \end{equation}
-
-  \textbf{Behavior with respect to Horizon ($H$):}
+  \textbf{Behaviour with respect to Horizon ($H$):}
   \begin{itemize}
-      \item \textbf{Decreases:} As $H$ increases, we resolve more seasonal phases and trend direction.
-      \item \textbf{Saturates:} Once $H$ covers the AR memory and seasonal periods, adding more history provides \textbf{zero} additional information gain.
-      \item \textbf{Limit:} $\Delta L_{\mathrm{Bayes}}^{(k)}(H) \to 0$ for large $H$.
+    \item \textbf{Decreases:} As $H$ increases, we resolve more seasonal phases and trend direction.
+    \item \textbf{Saturates:} Once $H$ covers the AR memory and seasonal periods, 
+          adding more history provides \textbf{zero} additional information gain.
+    \item \textbf{Limit:} $\Delta L_{\mathrm{Bayes}}^{(k)}(H) \to 0$ for large $H$.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Theorem 3: Approximation Loss Bound}
   The approximation error is bounded by curvature (bias) and variance terms:
-
   \begin{equation}
-      L_{\mathrm{approx}}^{(k)}(H,S; m) \le \underbrace{\Big( K_2^2\, d_{I,k}(H)^2 \Big)^{\frac{d_{I,k}(H)}{4 + d_{I,k}(H)}}}_{\text{Curvature / Bias Term}} 
-      + \underbrace{\Big( \frac{d_{I,k}(H)\, H}{D_k} \Big)^{\frac{4}{4 + d_{I,k}(H)}}}_{\text{Variance / Finite Sample Term}}
+    L_{\mathrm{approx}}^{(k)}(H,S; m) \lesssim 
+    \underbrace{\Big( K_2^2\, d_{I,k}(H)^2 \Big)^{\frac{d_{I,k}(H)}{4 + d_{I,k}(H)}}}_{\text{Curvature / Bias Term}} 
+    + \underbrace{\Big( \frac{d_{I,k}(H)\, H}{D_k} \Big)^{\frac{4}{4 + d_{I,k}(H)}}}_{\text{Variance / Finite Sample Term}}
   \end{equation}
-
   \textbf{Why does this increase with $H$?}
   \begin{enumerate}
-      \item \textbf{Intrinsic Dimension ($d_{I,k}$):} Grows with $H$, making the function harder to learn (Curse of Dimensionality).
-      \item \textbf{Effective Samples ($D_k/H$):} As window length $H$ grows, the number of independent samples in a fixed dataset decreases, increasing variance.
+    \item \textbf{Intrinsic Dimension ($d_{I,k}$):} Grows with $H$, making the function harder to learn (Curse of Dimensionality).
+    \item \textbf{Effective Samples ($D_k/H$):} As window length $H$ grows, the number of independent samples in a fixed dataset decreases, increasing variance.
   \end{enumerate}
 \end{frame}
 
 \section{Optimal Horizon Selection}
 \begin{frame}{The Fundamental Trade-off}
   The total loss $L^{(k)}(H)$ is \textbf{unimodal} (U-shaped).
-
   \begin{itemize}
-      \item \textbf{Small $H$:} High Bayesian Loss (Underfitting the dynamics).
-      \item \textbf{Large $H$:} High Approximation Loss (Overfitting / Insufficient samples).
+    \item \textbf{Small $H$:} High Bayesian Loss (Underfitting the dynamics).
+    \item \textbf{Large $H$:} High Approximation Loss (Overfitting / Insufficient samples).
   \end{itemize}
-
   \begin{block}{Smallest Sufficient Horizon ($H_k^*$)}
     Defined as the smallest $H$ where Bayesian loss improvements saturate within a tolerance $\delta$:
     \begin{equation}
-        H_k^*(\delta) := \min\{H : |\Delta L_{\mathrm{Bayes}}^{(k)}(H)| \le \delta\}
+      H_k^*(\delta) := \min\{H : |\Delta L_{\mathrm{Bayes}}^{(k)}(H)| \le \delta\}
     \end{equation}
   \end{block}
 \end{frame}
 
 \begin{frame}{Practical Selection: Seasonal Coverage}
   We can link the tolerance $\delta$ to interpretable seasonal coverage:
-
   \begin{equation}
-      H_k^*(\delta) = \max\{\ell_{\mathrm{AR},k},\ T_k^{(\tau)}\}
+    H_k^*(\delta) = \max\{\ell_{\mathrm{AR},k},\ T_k^{(\tau)}\}
   \end{equation}
-
   \textbf{Interpretation:}
   \begin{itemize}
-      \item The optimal horizon is simply the maximum of the \textbf{effective AR memory} and the \textbf{seasonal period} required to capture $(1-\tau)$ of the signal energy.
-      \item This provides a theoretically grounded, calculable target for each client.
+    \item The optimal horizon is simply the maximum of the \textbf{effective AR memory} and the \textbf{seasonal period} required to capture $(1-\tau)$ of the signal energy.
+    \item This provides a theoretically grounded, calculable target for each client.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Robust Global Horizon}
   In Federated Learning, we need a single global horizon $H_{\text{server}}$ despite heterogeneous local optima. We use a weighted trimmed mean:
-
   \begin{equation}
-      H_{\mathrm{server}} = \operatorname{TrimMean}_{\alpha}\left(\{H_k^*(\delta)\}_{k=1}^K ; \{w_k\}_{k=1}^K\right)
+    H_{\mathrm{server}}^* = \operatorname{TrimMean}_{\alpha}\big(\{H_k^*(\delta)\}_{k=1}^K ; \{w_k\}_{k=1}^K\big)
   \end{equation}
-
   \begin{itemize}
-      \item \textbf{Weights $w_k$:} Proportional to client data size ($n_k$).
-      \item \textbf{Trimmed Mean:} Discards the top/bottom $\alpha$-fraction of extreme horizons.
-      \item \textbf{Benefit:} Robustness. Prevents a single client with an extremely long seasonality (requiring huge $H$) from degrading the sample efficiency for all other clients.
+    \item \textbf{Weights $w_k$:} Proportional to client data size ($n_k$).
+    \item \textbf{Trimmed Mean:} Discards the top/bottom $\alpha$-fraction of extreme horizons.
+    \item \textbf{Benefit:} Robustness. Prevents a single client with an extremely long seasonality (requiring huge $H$) from degrading the sample efficiency for all other clients.
   \end{itemize}
 \end{frame}
 
-% =============================================================================
-% SECTION 9: CONCLUSION
-% =============================================================================
-\section{Conclusion}
-
-\begin{frame}{Summary \& Impact}
+\begin{frame}{Limitations \& Future Work}
+  \textbf{\color{usydred}Limitations:}
   \begin{itemize}
-      \item \textbf{Theoretical Foundation:} We provided the first rigorous derivation of optimal horizons for non-IID Federated Learning.
-      \item \textbf{Key Insight:} The optimal horizon is the \textbf{smallest sufficient horizon}.
-      \begin{itemize}
-          \item It is \textit{not} "the longer the better."
-          \item It occurs when the marginal gain in information (Bayesian) is overtaken by the marginal cost of complexity (Approximation).
-      \end{itemize}
-      \item \textbf{Methodology:} 
-      \begin{itemize}
-          \item Synthetic Data Generator (SDG) for theory.
-          \item Intrinsic Space for geometry.
-          \item Loss Decomposition for analysis.
-      \end{itemize}
+    \item Assumes a structured SDG, which may not capture complex nonlinear or regime-switching real-world dynamics.
+    \item Validated on limited real-world settings, so the generality of the optimal horizon theory across diverse federated datasets remains untested.
+  \end{itemize}
+  \textbf{\color{usydred}Future work:}
+  \begin{itemize}
+    \item Extend the SDG and theory to handle nonlinear, non-stationary, or multivariate temporal behaviors beyond the current additive model.
+    \item Validate the framework across broader and more challenging federated forecasting benchmarks, including irregular sampling and strong distribution drift.
+  \end{itemize}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{Conclusion}
+  % \item \textbf{Novel Framework:} 
+  This work establishes the first theoretically grounded criterion for adaptive horizon selection, 
+  offering practical guidance for model design and benchmarking in decentralized, heterogeneous environments.
+  \begin{itemize}
+    \small
+    \item \textbf{\color{usydred}Novel Framework:} This work introduces a principled approach for 
+          selecting input horizons in non-IID federated time series using a Synthetic Data Generator (SDG).
+    \item \textbf{\color{usydred}Federated Loss Decomposition:} We show that the decomposition of the forecasting loss into 
+          Bayesian error (decreases with horizon) and approximation error (increases with horizon) works under the FL settings.
+    \item \textbf{\color{usydred}Optimal Horizon:} We prove that the client-wise total loss is minimised at the smallest sufficient horizon $H^*$, 
+          balancing structure identification against the curse of dimensionality.
+          We also propose a robust aggregation mechanism to identify a single, 
+          effective horizon across heterogeneous clients.
   \end{itemize}
 \end{frame}
 
 \begin{frame}
+  \color{usydred}
   \centering
   \Huge \textbf{Thank You} \\
   \vspace{1cm}
   \large \textbf{Questions?}
 \end{frame}
 
-% --- References ---
 \section{Reference}
 \begin{frame}[allowframebreaks]
   \frametitle{References}
