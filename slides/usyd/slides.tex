@@ -52,12 +52,10 @@
               a tunable hyperparameter set via heuristics or validation, often leading to overfitting or inefficient data use
               \cite{akaike1974new,box2015time,hochreiter1997long,lim2020temporal,zhou2021informer,woo2023deeptime,koparanov2020lookback}.
     \end{itemize}
-    \textbf{2. Intrinsic Representation \& Scaling-Law Perspective}
+    \textbf{2. Intrinsic Representation}
     \begin{itemize}
-        \item Shi et al (2024) introduced the idea of an intrinsic space framework and
-              decomposes forecasting loss into Bayesian (irreducible) error and
-              approximation error, but assumes centralized, IID data, and homogeneous
-              architectures \cite{shi2024scaling}.
+        \item Shi et al (2024) introduced the idea of an intrinsic space framework for dynamic horizon selection, but assumes centralized, IID data 
+        \cite{shi2024scaling}. The framework is lack of step-by-step transformation from time series into the intrinsic space.
     \end{itemize}
     \textbf{3. Federated Learning (FL) for TSF}
     \begin{itemize}
@@ -81,13 +79,14 @@
     We introduce a Synthetic Data Generator (SDG) that explicitly models temporal dynamics (autoregression, seasonality, trend) and client heterogeneity.
     This allows us to construct a geometry-preserving intrinsic space and derive a computable Intrinsic Dimension $d_{I,k}(H)$ based on signal saturation.
     \item \textbf{\color{usydred}Federated Loss Decomposition:}
-    We establish a tight decomposition of predictive loss into irreducible (Bayesian) and approximation components, 
-    each analytically tied to the structural elements of time series data (e.g., AR memory, seasonality, trend) and 
-    the look-back horizon. Our analysis uncovers the fundamental bias–variance trade-off that governs forecasting performance in federated settings.
+    We establish an FL-based decomposition of predictive loss into Bayesian and Approximation components, 
+    each analytically tied to the structural elements of time series data and the look-back horizon. 
+    Our analysis shows the fundamental bias–variance trade-off that governs forecasting performance in federated settings.
     \item \textbf{\color{usydred}Provably Optimal Horizons ($H_k^*$ and $H^*_{server}$):}
-    We prove that the total loss is unimodal with respect to the horizon length and identify the smallest sufficient horizon as its global minimizer. 
-    This result provides the first rigorous criterion for horizon selection in time series forecasting and 
-    introduces a new design principle for model construction under sample-limited, heterogeneous environments.
+    We prove that the client-wise total loss is unimodal with respect to the horizon length and identify the smallest sufficient horizon as its global minimizer. 
+    This result provides the first rigorous criterion for horizon selection in time series forecasting 
+    % and introduces a new design principle for model construction 
+    under sample-limited, heterogeneous environments.
   \end{itemize}
 \end{frame}
 
@@ -163,8 +162,6 @@
     \item $\rho_k$: Spectral radius of the AR companion matrix (stability metric).
     \item Represents the time steps needed for impulse response to decay.
   \end{itemize}
-
-  \vspace{0.5em}
   \textbf{2. Seasonal Complexity ($g_k(H)$):}
   \begin{equation}
     g_k(H) = 2 \sum_{j=1}^{J} w_{j,k} \cdot \min \left(1, \frac{H}{T_{j,k}^*} \right)
