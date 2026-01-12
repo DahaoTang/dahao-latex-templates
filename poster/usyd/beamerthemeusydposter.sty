@@ -214,6 +214,11 @@
 % --- Spacing Defaults ---
 \setlength{\parskip}{0.35em}
 \setlength{\parindent}{0pt}
+\setbeamersize{text margin left=2cm, text margin right=2cm}
+% 2 cm white border top & bottom
+% \setlength{\paperheight}{\paperheight-1cm}
+% \addtolength{\voffset}{1cm}
+
 
 % --- Code Styling ---
 \lstset{
@@ -260,6 +265,7 @@
 \setbeamertemplate{headline}{
   \vbox{
     \begin{beamercolorbox}[wd=\paperwidth, sep=1cm]{headline}
+      \vspace*{1.2em}
       \begin{columns}[c]
         
         % 1. Left Slot
@@ -294,11 +300,11 @@
 
 % --- Footline ---
 \setbeamertemplate{footline}{
-  \begin{beamercolorbox}[ht=1.8em,leftskip=1em,rightskip=1em]{footline}
+  \begin{beamercolorbox}[ht=3.2em,leftskip=1em,rightskip=1em]{footline}
     \centering
     \hfill
     \small\texttt{dahao.tang@sydney.edu.au}\hspace{2em}
-    \vskip0.4em
+    \vskip1.8em
   \end{beamercolorbox}%
 }
 
