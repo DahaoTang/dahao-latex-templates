@@ -1,4 +1,4 @@
-MAIN=slides
+MAIN=card
 OUT=out
 LATEXMK=latexmk
 LATEXMKFLAGS=-xelatex -synctex=1 -interaction=nonstopmode -file-line-error -outdir=$(OUT)

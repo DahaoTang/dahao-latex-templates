@@ -6,6 +6,7 @@ The current templates include:
 
 ```
 .
+├── card			# a business card template with USYD logo
 ├── cv				# a standard latex cv
 ├── poster
 │   └── usyd        # a USYD-inspired colour theme template for poster
@@ -22,7 +23,7 @@ _Notes: the following building process triggered by saving the `.tex` file can o
 
 To build with a Makefile:
 
-1. Copy and paste (i) `assets/`, (ii) `fonts/`, (iii) `beamerthemeusyd.sty` (or `beamerthemeusydposter.sty`), (iv) `slides.tex` (or `poster.tex`) and (v) `Makefile` in the _same target folder_. These 5 folders/files are the only sources required to build a poster or slides.
-2. Modify the `slides.tex` (or `poster.tex`) file with your content.
+1. Copy and paste (i) `assets/`, (ii) `fonts/`, (iii) `beamerthemeusyd.sty` (or `beamerthemeusydposter.sty` etc), (iv) `slides.tex` (or `poster.tex` etc) and (v) `Makefile` in the _same target folder_. These 5 folders/files are the only sources required to build a poster or slides.
+2. Modify the `slides.tex` (or `poster.tex` etc) file with your content.
 3. _(Optional) You may change the name of the `.tex` file. Make sure in the `Makefile`, the value assigned to `MAIN` aligns with the name of the `.tex` file._
 4. Save it -- it will automatically be built. Only the `.pdf` will be kept after the build -- all the aux files will be removed.

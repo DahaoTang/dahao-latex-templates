@@ -1,0 +1,333 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeusydcard}[University of Sydney Business Card Beamer Theme]
+
+%==============================================================================
+%                                ENGINE CHECK
+%==============================================================================
+% This theme relies on 'fontspec' features (FakeBold/Slant) which require XeLaTeX.
+\RequirePackage{iftex}
+\ifXeTeX\else
+  \PackageError{beamerthemeusydcard}{This theme requires XeLaTeX}{Please compile using xelatex.}
+\fi
+
+%==============================================================================
+%                                DEPENDENCIES
+%==============================================================================
+% --- Core Utilities ---
+\RequirePackage{etoolbox}
+\RequirePackage{calc}
+
+% --- Graphics & Layout ---
+\RequirePackage{tikz}
+\RequirePackage{graphicx}
+
+% --- Fonts & Math ---
+\RequirePackage{fontspec}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsfonts}
+
+%==============================================================================
+%                               MODE: PRESENTATION
+%==============================================================================
+\mode<presentation>
+
+%==============================================================================
+%                                CONFIGURATION
+%==============================================================================
+
+% --- Asset Paths ---
+\newcommand*\USYDFontPath{fonts/}
+\graphicspath{{assets/}}
+
+% --- Internal Variables (front side) ---
+\gdef\USYD@Name{Your Name}
+\gdef\USYD@Role{Student}
+\gdef\USYD@Affiliation{The University of Sydney}
+
+\gdef\USYD@Email{firstname.lastname@sydney.edu.au}
+\gdef\USYD@Phone{+61 4XX XXX XXX}
+\gdef\USYD@Web{www.sydney.edu.au}
+\gdef\USYD@Address{Camperdown NSW 2006, \mbox{Australia}}
+
+\gdef\USYD@QRFile{qr}
+
+% --- Logos ---
+\gdef\USYD@FrontLogo{USYDLogo}        % top-right on front
+\gdef\USYD@BackLogo{USYDLogo}         % centered on back
+
+% Optional additional logo shown under the USYD logo (front side).
+\gdef\USYD@ExtraLogo{AAAI2026}         % file name (no extension needed)
+\newlength\USYD@ExtraLogoH
+\setlength\USYD@ExtraLogoH{10mm}
+
+
+% --- Card geometry (default business card) ---
+\newlength\USYD@CardW
+\newlength\USYD@CardH
+\setlength\USYD@CardW{100mm}
+\setlength\USYD@CardH{65mm}
+
+\newlength\USYD@Pad
+\setlength\USYD@Pad{15mm}
+
+% --- Right-side reserved column for front (logo + QR) ---
+\newlength\USYD@RightColW
+\newlength\USYD@Gap
+\setlength\USYD@RightColW{12mm}
+\setlength\USYD@Gap{2.0mm}
+
+% --- QR size ---
+\newlength\USYD@QRSize
+\setlength\USYD@QRSize{13mm}
+
+% --- Paper size (force PDF page box for XeLaTeX) ---
+% Beamer's internal page size does not always propagate to the PDF MediaBox.
+% We treat the card size as the single source of truth and force both
+% \paperwidth/\paperheight and \pdfpagewidth/\pdfpageheight accordingly.
+\newcommand*\USYD@ApplyPaperSize{%
+  \setlength\paperwidth{\USYD@CardW}%
+  \setlength\paperheight{\USYD@CardH}%
+  \pdfpagewidth=\paperwidth
+  \pdfpageheight=\paperheight
+}
+\AtBeginDocument{\USYD@ApplyPaperSize}
+
+%==============================================================================
+%                                1. COLOURS
+%==============================================================================
+% --- Palette (exactly as your reference sty) ---
+\definecolor{usydred}   {RGB}{236,  95,  50}
+\definecolor{usydblack} {RGB}{ 20,  20,  20}
+\definecolor{usydwhite} {RGB}{255, 255, 255}
+\definecolor{usydgrey}  {RGB}{241, 241, 241}
+
+% --- Beamer palette basics ---
+\setbeamercolor{normal text}{fg=usydblack, bg=usydwhite}
+\setbeamercolor{structure}{fg=usydred}
+\setbeamercolor{background canvas}{bg=usydwhite}
+
+%==============================================================================
+%                                2. FONTS
+%==============================================================================
+\defaultfontfeatures{Ligatures=TeX}
+
+% --- Main & Sans Fonts (Tw Cen MT) ---
+\setmainfont{Tw-Cen-MT}[
+  Path           = \USYDFontPath,
+  Extension      = .ttf,
+  UprightFont    = Tw-Cen-MT,
+  BoldFont       = Tw-Cen-MT,
+  ItalicFont     = Tw-Cen-MT,
+  BoldItalicFont = Tw-Cen-MT,
+  BoldFeatures   = {FakeBold=3.0},
+  ItalicFeatures = {FakeSlant=0.20},
+  BoldItalicFeatures = {FakeBold=3.0, FakeSlant=0.20}
+]
+
+\setsansfont{Tw-Cen-MT}[
+  Path           = \USYDFontPath,
+  Extension      = .ttf,
+  UprightFont    = Tw-Cen-MT,
+  BoldFont       = Tw-Cen-MT,
+  ItalicFont     = Tw-Cen-MT,
+  BoldItalicFont = Tw-Cen-MT,
+  BoldFeatures   = {FakeBold=3.0},
+  ItalicFeatures = {FakeSlant=0.20},
+  BoldItalicFeatures = {FakeBold=3.0, FakeSlant=0.20}
+]
+
+% --- Monospace Font (Google Sans Code) ---
+\setmonofont{GoogleSansCode-Regular}[
+  Path           = \USYDFontPath,
+  Extension      = .ttf,
+  Scale          = MatchLowercase,
+  UprightFont    = GoogleSansCode-Regular,
+  ItalicFont     = GoogleSansCode-Italic,
+  BoldFont       = GoogleSansCode-Bold,
+  BoldItalicFont = GoogleSansCode-BoldItalic
+]
+
+% --- Math Fonts (Custom Tinos Integration) ---
+\newfontfamily\USYDTinos{Tinos-Regular}[
+  Path           = \USYDFontPath,
+  Extension      = .ttf,
+  UprightFont    = Tinos-Regular,
+  ItalicFont     = Tinos-Italic,
+  BoldFont       = Tinos-Bold,
+  BoldItalicFont = Tinos-BoldItalic
+]
+
+\newcommand*\USYD@TinosFamily{}
+\newcommand*\USYD@MonoFamily{}
+
+\AtBeginDocument{
+  \begingroup\USYDTinos\global\edef\USYD@TinosFamily{\f@family}\endgroup
+  \begingroup\ttfamily \global\edef\USYD@MonoFamily {\f@family}\endgroup
+
+  \DeclareMathAlphabet{\mathnormal}{TU}{\USYD@TinosFamily}{m}{it}
+  \SetMathAlphabet{\mathnormal}{bold}{TU}{\USYD@TinosFamily}{b}{it}
+  \DeclareMathAlphabet{\mathrm}{TU}{\USYD@TinosFamily}{m}{n}
+  \SetMathAlphabet{\mathrm}{bold}{TU}{\USYD@TinosFamily}{b}{n}
+  \DeclareMathAlphabet{\mathbf}{TU}{\USYD@TinosFamily}{b}{n}
+  \DeclareMathAlphabet{\mathit}{TU}{\USYD@TinosFamily}{m}{it}
+  \SetMathAlphabet{\mathit}{bold}{TU}{\USYD@TinosFamily}{b}{it}
+  \DeclareMathAlphabet{\mathsf}{TU}{\USYD@TinosFamily}{m}{n}
+  \SetMathAlphabet{\mathsf}{bold}{TU}{\USYD@TinosFamily}{b}{n}
+
+  \DeclareMathAlphabet{\mathtt}{TU}{\USYD@MonoFamily}{m}{n}
+  \SetMathAlphabet{\mathtt}{bold}{TU}{\USYD@MonoFamily}{b}{n}
+}
+
+\let\USYD@origtext\text
+\renewcommand{\text}[1]{%
+  \ifmmode\hbox{\USYDTinos #1}\else\USYD@origtext{#1}\fi
+}
+
+%==============================================================================
+%                                3. USER API
+%==============================================================================
+\newcommand{\name}[1]{\gdef\USYD@Name{#1}}
+\newcommand{\role}[1]{\gdef\USYD@Role{#1}}
+\newcommand{\affiliation}[1]{\gdef\USYD@Affiliation{#1}}
+
+\newcommand{\email}[1]{\gdef\USYD@Email{#1}}
+\newcommand{\phone}[1]{\gdef\USYD@Phone{#1}}
+\newcommand{\web}[1]{\gdef\USYD@Web{#1}}
+\newcommand{\address}[1]{\gdef\USYD@Address{#1}}
+
+\newcommand{\qrfile}[1]{\gdef\USYD@QRFile{#1}}
+
+\newcommand{\frontlogo}[1]{\gdef\USYD@FrontLogo{#1}}
+\newcommand{\backlogo}[1]{\gdef\USYD@BackLogo{#1}}
+\newcommand{\extralogo}[1]{\gdef\USYD@ExtraLogo{#1}}
+\newcommand{\extralogosize}[1]{\setlength\USYD@ExtraLogoH{#1}}
+
+
+\newcommand{\cardsize}[2]{
+  \setlength\USYD@CardW{#1}
+  \setlength\USYD@CardH{#2}
+  \USYD@ApplyPaperSize
+}
+
+\newcommand{\cardpadding}[1]{
+  \setlength\USYD@Pad{#1}
+}
+
+\newcommand{\rightcolwidth}[1]{
+  \setlength\USYD@RightColW{#1}
+}
+
+\newcommand{\qrsize}[1]{
+  \setlength\USYD@QRSize{#1}
+}
+
+%==============================================================================
+%                                4. BEAMER LAYOUT
+%==============================================================================
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+\setbeamertemplate{headline}{}
+
+% Utility: detect which frame we are on (front = 1, back = 2)
+% Beamer page numbers map to frames in this simple deck.
+\newcommand{\USYD@CardSide}{\insertpagenumber}
+
+% --- Background template: front vs back ---
+\setbeamertemplate{background canvas}{
+  \begin{tikzpicture}
+    \useasboundingbox (0,0) rectangle(\paperwidth,\paperheight);
+
+    \ifnum\USYD@CardSide=2\relax
+      % =======================
+      % Back: full USYD red
+      % =======================
+      \fill[usydred] (0,0) rectangle(\paperwidth,\paperheight);
+
+      % Centered logo
+      \node[anchor=center] at (0.5\paperwidth,0.5\paperheight) {
+        \includegraphics[width=0.3\paperwidth]{\USYD@BackLogo}
+      };
+
+    \else
+      % =======================
+      % Front: clean white card
+      % =======================
+      \fill[usydwhite] (0,0) rectangle(\paperwidth,\paperheight);
+
+      % Subtle outline
+      \draw[usydgrey, line width=0.6pt, rounded corners=6pt]
+        (0.6pt,0.6pt) rectangle(\paperwidth-0.6pt,\paperheight-0.6pt);
+
+      % Accent line
+      \fill[usydred]
+        (\USYD@Pad, \USYD@Pad-1.2mm) rectangle(\paperwidth-\USYD@Pad, \USYD@Pad-0.2mm);
+
+      % Columns
+      \newlength\USYD@LeftW
+      \setlength\USYD@LeftW{
+        \dimexpr\paperwidth - 2\USYD@Pad - \USYD@Gap - \USYD@RightColW\relax
+      }
+
+      % Header (stable: fixed text width + explicit \\ breaks)
+      \node[
+        anchor=north west,
+        inner sep=0pt,
+        text width=\USYD@LeftW,
+        align=left
+      ] at (\USYD@Pad,\paperheight-\USYD@Pad) {
+        {\fontsize{14.5pt}{16pt}\selectfont\bfseries\color{usydblack}\USYD@Name}\\[-0.2mm]
+        {\fontsize{7.5pt}{11pt}\selectfont\color{usydblack}\USYD@Role}\\[-0.2mm]
+        {\fontsize{8.5pt}{10pt}\selectfont\color{usydblack}\USYD@Affiliation}
+      };
+
+      % Contact block
+      \node[
+        anchor=south west,
+        inner sep=0pt,
+        text width=\USYD@LeftW,
+        align=left
+      ] at (\USYD@Pad,\USYD@Pad+2.0mm) {
+        \raggedright
+        \hyphenpenalty=10000\exhyphenpenalty=10000
+        {\fontsize{8pt}{10pt}\selectfont\color{usydblack}
+          \setlength{\tabcolsep}{0pt}
+          \renewcommand{\arraystretch}{1.15}
+          \begin{tabular}{@{}p{5mm}p{\dimexpr\USYD@LeftW-4mm\relax}@{}}
+            \textbf{W:} & \USYD@Web\\
+            \textbf{T:} & \USYD@Phone\\
+            \textbf{E:} & \USYD@Email\\
+            \textbf{A:} & \USYD@Address
+          \end{tabular}
+        }
+      };
+
+
+      % Logo (top-right)
+      \node[anchor=north east, inner sep=0pt]
+        at (\paperwidth-\USYD@Pad,\paperheight-\USYD@Pad+2mm) {
+          \includegraphics[height=9.5mm]{\USYD@FrontLogo}
+        };
+
+
+      % Extra logo under USYD logo (front; optional).
+      \node[anchor=north east, inner sep=0pt, yshift=-11mm]
+        at (\paperwidth-\USYD@Pad-0.2mm,\paperheight-\USYD@Pad+3mm) {
+          \includegraphics[height=\USYD@ExtraLogoH]{\USYD@ExtraLogo}
+        };
+
+
+      % QR (bottom-right; optional)
+      \node[anchor=south east, inner sep=0pt]
+        at (\paperwidth-\USYD@Pad,\USYD@Pad+2mm) {
+          \includegraphics[page=1,width=\USYD@QRSize,height=\USYD@QRSize,keepaspectratio]{assets/\USYD@QRFile}
+        };%
+
+    \fi
+  \end{tikzpicture}
+}
+
+%==============================================================================
+%                               MODE: ALL
+%==============================================================================
+\mode<all>
