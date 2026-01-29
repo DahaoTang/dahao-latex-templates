@@ -7,7 +7,7 @@
 \title{\large Optimal Look-back Horizon for Time Series Forecasting in Federated Learning}
 \subtitle{}\vspace*{-1.5em}
 \author{\noindent
-  Dahao Tang,
+  Dahao Tang\textsuperscript{1},
   Nan Yang\textsuperscript{1},
   Yanli Li\textsuperscript{1},
   Zhiyu Zhu\textsuperscript{2},
@@ -83,7 +83,7 @@
     each analytically tied to the structural elements of time series data and the look-back horizon. 
     Our analysis shows the fundamental bias–variance trade-off that governs forecasting performance in federated settings.
     \item \textbf{\color{usydred}Provably Optimal Horizons ($H_k^*$ and $H^*_{server}$):}
-    We prove that the client-wise total loss is unimodal with respect to the horizon length and identify the smallest sufficient horizon as its global minimizer. 
+    We prove that the client-wise total loss is (conditionally) unimodal with respect to the horizon length and identify the smallest sufficient horizon as its global minimiser. 
     This result provides the first rigorous criterion for horizon selection in time series forecasting 
     % and introduces a new design principle for model construction 
     under sample-limited, heterogeneous environments.
@@ -217,7 +217,8 @@
 
 \section{Optimal Horizon Selection}
 \begin{frame}{The Fundamental Trade-off}
-  The total loss $L^{(k)}(H)$ is \textbf{unimodal} (U-shaped).
+  The total loss $L^{(k)}(H)$ is (conditionally) minimised at the smallest sufficient horizon $H^*$. 
+  % and is achieved at the smallest sufficient horizon ($H_k^*$),
   \begin{itemize}
     \item \textbf{Small $H$:} High Bayesian Loss (Underfitting the dynamics).
     \item \textbf{Large $H$:} High Approximation Loss (Overfitting / Insufficient samples).
@@ -228,6 +229,19 @@
       H_k^*(\delta) := \min\{H : |\Delta L_{\mathrm{Bayes}}^{(k)}(H)| \le \delta\}
     \end{equation}
   \end{block}
+  % defined as the smallest horizon where Bayes improvements fall below $\delta$:
+  % \begin{equation}
+  %   H_k^*(\delta) := \min\{H \in \mathbb{N} : |\Delta L^{(k)}_{\text{Bayes}}(H)| \le \delta\}.
+  % \end{equation}
+
+  \textbf{Theorem 4 (Margin Conditions).} If there exists $\delta>0$ such that
+  \begin{equation}
+  \Delta L^{(k)}_{\text{Bayes}}(H) \le -\delta ,\ \forall H < H_k^*(\delta),
+  \qquad
+  \Delta L^{(k)}_{\text{approx}}(H) \ge \delta ,\ \forall H \ge H_k^*(\delta),
+  \end{equation}
+  then the total loss $L^{(k)}(H)$ is \textbf{unimodal} and is \textbf{minimized at} $H_k^*(\delta)$ (up to integer ties).
+
 \end{frame}
 
 \begin{frame}{Practical Selection: Seasonal Coverage}
@@ -242,7 +256,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Robust Global Horizon}
+\begin{frame}{Global Horizon}
   In Federated Learning, we need a single global horizon $H_{\text{server}}$ despite heterogeneous local optima. We use a weighted trimmed mean:
   \begin{equation}
     H_{\mathrm{server}}^* = \operatorname{TrimMean}_{\alpha}\big(\{H_k^*(\delta)\}_{k=1}^K ; \{w_k\}_{k=1}^K\big)
@@ -278,7 +292,7 @@
           selecting input horizons in non-IID federated time series using a Synthetic Data Generator (SDG).
     \item \textbf{\color{usydred}Federated Loss Decomposition:} We show that the decomposition of the forecasting loss into 
           Bayesian error (decreases with horizon) and approximation error (increases with horizon) works under the FL settings.
-    \item \textbf{\color{usydred}Optimal Horizon:} We prove that the client-wise total loss is minimised at the smallest sufficient horizon $H^*$, 
+    \item \textbf{\color{usydred}Optimal Horizon:} We prove that the client-wise total loss is (conditionally) minimised at the smallest sufficient horizon $H^*$, 
           balancing structure identification against the curse of dimensionality.
           We also propose a robust aggregation mechanism to identify a single, 
           effective horizon across heterogeneous clients.
